@@ -1,0 +1,201 @@
+[
+    {
+        "name": "Anaheim Ducks",
+        "color": "#F47A38",
+        "logo": "data/icons/Anaheim Ducks.png",
+        "goalHorn": "data/audio/Anaheim Ducks.mp3"
+    },
+    {
+        "name": "Arizona Coyotes",
+        "color": "#8C2633",
+        "logo": "data/icons/Arizona Coyotes.png",
+        "goalHorn": "data/audio/Arizona Coyotes.mp3"
+    },
+    {
+        "name": "Boston Bruins",
+        "color": "#FFB81C",
+        "logo": "data/icons/Boston Bruins.png",
+        "goalHorn": "data/audio/Boston Bruins.mp3"
+    },
+    {
+        "name": "Buffalo Sabres",
+        "color": "#002654",
+        "logo": "data/icons/Buffalo Sabres.png",
+        "goalHorn": "data/audio/Buffalo Sabres.mp3"
+    },
+    {
+        "name": "Calgary Flames",
+        "color": "#C8102E",
+        "logo": "data/icons/Calgary Flames.png",
+        "goalHorn": "data/audio/Calgary Flames.mp3"
+    },
+    {
+        "name": "Carolina Hurricanes",
+        "color": "#CC0000",
+        "logo": "data/icons/Carolina Hurricanes.png",
+        "goalHorn": "data/audio/Carolina Hurricanes.mp3"
+    },
+    {
+        "name": "Chicago Blackhawks",
+        "color": "#CF0A2C",
+        "logo": "data/icons/Chicago Blackhawks.png",
+        "goalHorn": "data/audio/Chicago Blackhawks.mp3"
+    },
+    {
+        "name": "Colorado Avalanche",
+        "color": "#6F263D",
+        "logo": "data/icons/Colorado Avalanche.png",
+        "goalHorn": "data/audio/Colorado Avalanche.mp3"
+    },
+    {
+        "name": "Columbus Blue Jackets",
+        "color": "#002654",
+        "logo": "data/icons/Columbus Blue Jackets.png",
+        "goalHorn": "data/audio/Columbus Blue Jackets.mp3"
+    },
+    {
+        "name": "Dallas Stars",
+        "color": "#006847",
+        "logo": "data/icons/Dallas Stars.png",
+        "goalHorn": "data/audio/Dallas Stars.mp3"
+    },
+    {
+        "name": "Detroit Red Wings",
+        "color": "#CE1126",
+        "logo": "data/icons/Detroit Red Wings.png",
+        "goalHorn": "data/audio/Detroit Red Wings.mp3"
+    },
+    {
+        "name": "Edmonton Oilers",
+        "color": "#041E42",
+        "logo": "data/icons/Edmonton Oliers.png",
+        "goalHorn": "data/audio/Edmonton Oliers.mp3"
+    },
+    {
+        "name": "Florida Panthers",
+        "color": "#041E42",
+        "logo": "data/icons/Florida Panthers.png",
+        "goalHorn": "data/audio/Florida Panthers.mp3"
+    },
+    {
+        "name": "Los Angeles Kings",
+        "color": "#111111",
+        "logo": "data/icons/Los Angeles Kings.png",
+        "goalHorn": "data/audio/Los Angeles Kings.mp3"
+    },
+    {
+        "name": "Minnesota Wild",
+        "color": "#154734",
+        "logo": "data/icons/Minnesota Wild.png",
+        "goalHorn": "data/audio/Minnesota Wild.mp3"
+    },
+    {
+        "name": "Montreal Canadiens",
+        "color": "#AF1E2D",
+        "logo": "data/icons/Montreal Canadiens.png",
+        "goalHorn": "data/audio/Montreal Canadiens.mp3"
+    },
+    {
+        "name": "Nashville Predators",
+        "color": "#FFB81C",
+        "logo": "data/icons/Nashville Predators.png",
+        "goalHorn": "data/audio/Nashville Predators.mp3"
+    },
+    {
+        "name": "New Jersey Devils",
+        "color": "#CE1126",
+        "logo": "data/icons/New Jersey Devils.png",
+        "goalHorn": "data/audio/New Jersey Devils.mp3"
+    },
+    {
+        "name": "New York Islanders",
+        "color": "#00539B",
+        "logo": "data/icons/New York Islanders.png",
+        "goalHorn": "data/audio/New York Islanders.mp3"
+    },
+    {
+        "name": "New York Rangers",
+        "color": "#0038A8",
+        "logo": "data/icons/New York Rangers.png",
+        "goalHorn": "data/audio/New York Rangers.mp3"
+    },
+    {
+        "name": "Ottawa Senators",
+        "color": "#C52032",
+        "logo": "data/icons/Ottawa Senators.png",
+        "goalHorn": "data/audio/Ottawa Senators.mp3"
+    },
+    {
+        "name": "Philadelphia Flyers",
+        "color": "#F74902",
+        "logo": "data/icons/Philadelphia Flyers.png",
+        "goalHorn": "data/audio/Philadelphia Flyers.mp3"
+    },
+    {
+        "name": "Pittsburgh Penguins",
+        "color": "#FCB514",
+        "logo": "data/icons/Pittsburgh Penguins.png",
+        "goalHorn": "data/audio/Pittsburgh Penguins.mp3"
+    },
+    {
+        "name": "San Jose Sharks",
+        "color": "#006D75",
+        "logo": "data/icons/San Jose Sharks.png",
+        "goalHorn": "data/audio/San Jose Sharks.mp3"
+    },
+    {
+        "name": "Seattle Kraken",
+        "color": "#355464",
+        "logo": "data/icons/Seattle Kraken.png",
+        "goalHorn": "data/audio/Seattle Kraken.mp3"
+    },
+    {
+        "name": "St. Louis Blues",
+        "color": "#002F87",
+        "logo": "data/icons/St. Louis Blues.png",
+        "goalHorn": "data/audio/St. Louis Blues.mp3"
+    },
+
+    {
+        "name": "Tampa Bay Lightning",
+        "color": "#002868",
+        "logo": "data/icons/Tampa Bay Lightning.png",
+        "goalHorn": "data/audio/Tampa Bay Lightning.mp3"
+    },
+    {
+        "name": "Toronto Maple Leafs",
+        "color": "#00205B",
+        "logo": "data/icons/Toronto Maple Leafs.png",
+        "goalHorn": "data/audio/Toronto Maple Leafs.mp3"
+    },
+    {
+        "name": "Vancouver Canucks",
+        "color": "#00205B",
+        "logo": "data/icons/Vancouver Canucks.png",
+        "goalHorn": "data/audio/Vancouver Canucks.mp3"
+    },
+    {
+        "name": "Vegas Golden Knights",
+        "color": "#B4975A",
+        "logo": "data/icons/Vegas Golden Knights.png",
+        "goalHorn": "data/audio/Vegas Golden Knights.mp3"
+    },
+    {
+        "name": "Washington Capitals",
+        "color": "#C8102E",
+        "logo": "data/icons/Washington Capitals.png",
+        "goalHorn": "data/audio/Washington Capitals.mp3"
+    },
+    {
+        "name": "Winnipeg Jets",
+        "color": "#041E42",
+        "logo": "data/icons/Winnipeg Jets.png",
+        "goalHorn": "data/audio/Winnipeg Jets.mp3"
+    },
+    {
+        "name": "NHL",
+        "color": "#A9A9A9",
+        "logo": "data/icons/NHL.png",
+        "goalHorn": "data/audio/Vancouver Canucks.mp3"
+    }
+]
