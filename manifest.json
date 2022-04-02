@@ -3,10 +3,10 @@
     "description": "Single Game Tracker",
     "version": "1.0",
     "manifest_version": 3,
-    "browser_action": {
-        "default_popup": "popup.html",
-        "default_icon":{
-          "128": "bbt128.png"
-        }
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
       }
   }
