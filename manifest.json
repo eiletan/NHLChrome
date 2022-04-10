@@ -3,6 +3,12 @@
     "description": "Single Game Tracker",
     "version": "1.0",
     "manifest_version": 3,
+    "web_accessible_resources": [
+        {
+            "resources": ["/data/audio/*","/data/icons/*","/data/teams/*"],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "background": {
         "service_worker": "background.js"
     },

@@ -1,32 +1,9 @@
 /**
- * Makes a GET request to the NHL API
- * @param {String} uri uri for the NHL API ex. "/teams" 
- * @returns {Promise} Promise that resolves with the API response in JSON format
- */
-function GetFromNHLApi(uri) {
-    let nhlbase = chrome.runtime.getManifest().host_permissions[0] + "api/v1";
-    let xhttp = new XMLHttpRequest();
-    xhttp.responseType = "json";
-    let promise = new Promise((resolve, reject) => {
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                resolve(xhttp.response);
-            } else if (this.readyState == 4 && this.status != 200) {
-                reject(xhttp.response);
-            }
-        };
-        xhttp.open("GET", nhlbase + uri, true);
-        xhttp.send();
-    });
-    return promise;
-}
-
-/**
  * Find all NHL games occuring on the passed in date
  * @param {String} date Date of the game - Must be in format "YYYY-MM-DD"
  * @returns {Promise} Promise that resolves with the list of games for the date as an array 
  */
-function findGames(date) {
+ function findGames(date) {
     let gamesList = null;
     let retprom = new Promise((resolve) => {
         GetFromNHLApi("/schedule?date=" + date).then((games) => {
@@ -98,23 +75,7 @@ function matchTeamName(teamNameA, teamNameB) {
     return false;
 }
 
-
-document.getElementById("button").addEventListener('click', function () {
-
-    GetFromNHLApi("/teams").then((teams) => {
-        console.log(teams["teams"]);
-        return GetFromNHLApi("/schedule?date=2022-04-03");
-    }).then((games)=> {
-        console.log(games);
-    }).catch((err) => {
-        console.log("error");
-        console.log(err);
-    })
-    findGameForTeam("Vancouver Canucks", "2022-04-08").then((gameId) => {
-        console.log(gameId);
-    }).catch((err) => {
-        console.log("error")
-        console.log(err);
-    })
-
-});
+function createGame(gameson, gameid) {
+    lastGoalId = -1;
+    
+}
