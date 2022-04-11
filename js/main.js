@@ -22,6 +22,10 @@ function GetFromNHLApi(uri) {
   return promise;
 }
 
+/**
+ * Initializes team directory as a JSON object in local storage by combining data from
+ * a local json file and the NHL API
+ */
 function initTeams() {
   const url = chrome.runtime.getURL("data/teams/teams.json");
   fetch(url)
@@ -33,7 +37,6 @@ function initTeams() {
 
 function initTeamsHelper(localTeamsJson) {
   GetFromNHLApi("/teams").then((teams) => {
-      console.log("initteamshelper");
       let apiteams = teams["teams"];
       let internalTeamsJson = {};
       for (team of localTeamsJson) {
@@ -46,7 +49,6 @@ function initTeamsHelper(localTeamsJson) {
           internalTeamsJson[obj["name"]] = obj;
         }
       }
-      console.log(internalTeamsJson);
       let keys = Object.keys(internalTeamsJson);
       for (apiteam of apiteams) {
         if (apiteam["active"] === true) {
@@ -66,7 +68,10 @@ function initTeamsHelper(localTeamsJson) {
           }
         }
       }
-      console.log(internalTeamsJson);
+      // Save to local storage
+      chrome.storage.local.set({"teams": internalTeamsJson}, function() {
+        console.log("Teams have been saved to local storage: " + internalTeamsJson);
+      });
     }).catch((err) => {
       console.log(err);
       throw "Team initialization failed. Please try again";
@@ -74,19 +79,19 @@ function initTeamsHelper(localTeamsJson) {
 }
 
 document.getElementById("button").addEventListener("click", function () {
-  GetFromNHLApi("/teams")
-    .then((teams) => {
-      console.log(teams["teams"]);
-      return GetFromNHLApi("/schedule?date=2022-04-03");
-    })
-    .then((games) => {
-      console.log(games);
-    })
-    .catch((err) => {
-      console.log("error");
-      console.log(err);
-    });
-  findGameForTeam("Vancouver Canucks", "2022-04-09")
+  // GetFromNHLApi("/teams")
+  //   .then((teams) => {
+  //     console.log(teams["teams"]);
+  //     return GetFromNHLApi("/schedule?date=2022-04-03");
+  //   })
+  //   .then((games) => {
+  //     console.log(games);
+  //   })
+  //   .catch((err) => {
+  //     console.log("error");
+  //     console.log(err);
+  //   });
+  findGameForTeam("Vancouver Canucks", "2022-04-10")
     .then((gameId) => {
       console.log(gameId);
     })

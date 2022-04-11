@@ -17,5 +17,8 @@
     },
     "host_permissions": [
         "https://statsapi.web.nhl.com/"
-      ]
+    ],
+    "permissions": [
+        "storage"
+    ]
   }

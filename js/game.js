@@ -3,7 +3,7 @@
  * @param {String} date Date of the game - Must be in format "YYYY-MM-DD"
  * @returns {Promise} Promise that resolves with the list of games for the date as an array 
  */
- function findGames(date) {
+function findGames(date) {
     let gamesList = null;
     let retprom = new Promise((resolve) => {
         GetFromNHLApi("/schedule?date=" + date).then((games) => {
@@ -18,25 +18,26 @@
 }
 
 /**
- * Find the id of a NHL game involving the passed in team on the given date
+ * Find the NHL game involving the passed in team on the given date
  * @param {String} team Name of the team 
  * @param {String} date Date of the game - Must be in format "YYYY-MM-DD"
- * @returns id of the NHL game, else an exception is thrown
+ * @returns the NHL game as a JSON object, else an exception is thrown
  */
 function findGameForTeam(team, date) {
     let retprom = new Promise((resolve) => {
         try {
             findGames(date).then((retgames) => {
-                let gameId = null;
+                let found = false;
                 for (game of retgames) {
                     let awayTeam = game["teams"]["away"]["team"]["name"]
                     let homeTeam = game["teams"]["home"]["team"]["name"]
                     if (matchTeamName(awayTeam, team) || matchTeamName(homeTeam, team)) {
-                        gameId = game["gamePk"];
-                        resolve(gameId);
+                        found = true;
+                        console.log(game);
+                        resolve(game);
                     }
                 }
-                if (gameId === null) {
+                if (found == false) {
                     throw "Game for " + team + " could not be found. Please try again."
                 }
             }).catch((err) => {
@@ -56,12 +57,20 @@ function findGameForTeam(team, date) {
  * @returns True if the teams are the same, false otherwise
  */
 function matchTeamName(teamNameA, teamNameB) {
-    teamNameA = decodeURIComponent(escape(teamNameA));
-    teamNameB = decodeURIComponent(escape(teamNameB));
-    teamNameA = teamNameA.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    teamNameB = teamNameB.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    teamNameA = teamNameA.toLowerCase();
-    teamNameB = teamNameB.toLowerCase();
+    try {
+        teamNameA = decodeURIComponent(escape(teamNameA));
+        teamNameB = decodeURIComponent(escape(teamNameB));
+        teamNameA = teamNameA.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        teamNameB = teamNameB.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        teamNameA = teamNameA.toLowerCase();
+        teamNameB = teamNameB.toLowerCase();
+    } catch {
+        teamNameA = teamNameA.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        teamNameB = teamNameB.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        teamNameA = teamNameA.toLowerCase();
+        teamNameB = teamNameB.toLowerCase();
+    }
+
     if (teamNameA.valueOf() == teamNameB.valueOf()) {
         return true;
     } else {
@@ -73,9 +82,4 @@ function matchTeamName(teamNameA, teamNameB) {
         }
     }
     return false;
-}
-
-function createGame(gameson, gameid) {
-    lastGoalId = -1;
-    
 }
