@@ -5,13 +5,15 @@
  */
 function findGames(date) {
     let gamesList = null;
-    let retprom = new Promise((resolve) => {
+    let retprom = new Promise((resolve,reject) => {
         GetFromNHLApi("/schedule?date=" + date).then((games) => {
             gamesList = games["dates"][0]["games"];
             console.log(gamesList);
             resolve(gamesList);
+            return;
         }).catch((err) => {
-            throw "Games for " + date + " could not be found. Please try again";
+            reject("Games for " + date + " could not be found. Please try again");
+            return;
         });
     });
     return retprom;
@@ -90,7 +92,6 @@ function matchTeamName(teamNameA, teamNameB) {
  * @returns a Promise that resolves when the internal record of the game is created and saved to local storage
  */
 function createGame(gameid) {
-    let lastGoalId = -1;
     let retprom = new Promise((resolve,reject) => {
       GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((response) => {
           let gameData = response["gameData"];
@@ -99,7 +100,6 @@ function createGame(gameid) {
           let gameObj = {};
           gameObj["home"] = homeTeam;
           gameObj["away"] = awayTeam;
-          gameObj["lastGoalId"] = lastGoalId;
           gameObj["id"] = gameid;
           gameObj["allGoals"] = [];
           gameObj["currentState"] = {};
@@ -107,12 +107,47 @@ function createGame(gameid) {
           chrome.storage.local.set({ currentGame: gameObj  }, function () {
             console.log("Game have been saved to local storage: " + gameObj);
             console.log(gameObj);
-            resolve();
+            resolve(gameObj);
+            return;
           });
         }).catch((err) => {
             reject("Game could not be created due to: " + err);
+            return;
         });
     });
     return retprom;
+  }
+
+  function getAllGoalsScored(gameid, gameson) {
+      let retprom = new Promise((resolve,reject) => {
+          GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
+              gameData = game["liveData"]["plays"]["allPlays"];
+              goals = [];
+              firstGoalFound = false;
+              for(let i = gameData.length - 1; i >= 0; i--) {
+                  let gameEvent = gameData[i];
+                  let gameEventType = gameEvent["result"]["eventTypeId"];
+                  if (gameEventType.valueOf() === "GOAL") {
+                      if (firstGoalFound == false && gameson["allGoals"].length > 0) {
+                          if (gameson["allGoals"][0]["about"]["eventId"] == gameEvent["about"]["eventId"]) {
+                              resolve(gameson["allGoals"]);
+                              return;
+                          } else {
+                              firstGoalFound = true;
+                              goals.push(gameEvent);
+                          }
+                      } else {
+                          goals.push(gameEvent);
+                      }
+                  }
+              }
+              resolve(goals);
+              return;
+          }).catch((err) => {
+              reject("Error retrieving game data: " + err);
+              return;
+          });
+      })
+      return retprom;
   }
   

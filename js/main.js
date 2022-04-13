@@ -101,8 +101,10 @@ document.getElementById("button").addEventListener("click", function () {
     });
 
   initTeams();
-  createGame("2021021177").then(() => {
-    console.log("complete");
+  createGame("2021021175").then((gameObj) => {
+    return getAllGoalsScored("2021021175",gameObj);
+  }).then((goals) => {
+    console.log(goals);
   }).catch((err) => {
     console.log(err);
   });
