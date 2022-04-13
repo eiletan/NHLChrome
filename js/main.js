@@ -101,4 +101,9 @@ document.getElementById("button").addEventListener("click", function () {
     });
 
   initTeams();
+  createGame("2021021177").then(() => {
+    console.log("complete");
+  }).catch((err) => {
+    console.log(err);
+  });
 });

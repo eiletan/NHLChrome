@@ -24,7 +24,7 @@ function findGames(date) {
  * @returns the NHL game as a JSON object, else an exception is thrown
  */
 function findGameForTeam(team, date) {
-    let retprom = new Promise((resolve) => {
+    let retprom = new Promise((resolve,reject) => {
         try {
             findGames(date).then((retgames) => {
                 let found = false;
@@ -38,10 +38,10 @@ function findGameForTeam(team, date) {
                     }
                 }
                 if (found == false) {
-                    throw "Game for " + team + " could not be found. Please try again."
+                    reject("Game for " + team + " could not be found. Please try again.");
                 }
             }).catch((err) => {
-                throw err;
+                reject(err);
             });
         } catch (err) {
             throw err;
@@ -83,3 +83,36 @@ function matchTeamName(teamNameA, teamNameB) {
     }
     return false;
 }
+
+/**
+ * Creates an internal record of a NHL game and saves it to local storage.
+ * @param {String} gameid Internal ID of a NHL game 
+ * @returns a Promise that resolves when the internal record of the game is created and saved to local storage
+ */
+function createGame(gameid) {
+    let lastGoalId = -1;
+    let retprom = new Promise((resolve,reject) => {
+      GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((response) => {
+          let gameData = response["gameData"];
+          let homeTeam = gameData["teams"]["home"]["name"];
+          let awayTeam = gameData["teams"]["away"]["name"];
+          let gameObj = {};
+          gameObj["home"] = homeTeam;
+          gameObj["away"] = awayTeam;
+          gameObj["lastGoalId"] = lastGoalId;
+          gameObj["id"] = gameid;
+          gameObj["allGoals"] = [];
+          gameObj["currentState"] = {};
+          // Save to local storage
+          chrome.storage.local.set({ currentGame: gameObj  }, function () {
+            console.log("Game have been saved to local storage: " + gameObj);
+            console.log(gameObj);
+            resolve();
+          });
+        }).catch((err) => {
+            reject("Game could not be created due to: " + err);
+        });
+    });
+    return retprom;
+  }
+  
