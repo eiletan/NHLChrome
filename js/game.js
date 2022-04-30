@@ -174,13 +174,13 @@ function createGame(gameid) {
               let gameState = {};
               gameState["period"] = current["currentPeriodOrdinal"];
               gameState["periodTimeRemaining"] = current["currentPeriodTimeRemaining"];
-              gameState["homeShootoutScore"] = null;
-              gameState["awayShootoutScore"] = null;
+              homeTeam["shootoutScore"] = null;
+              awayTeam["shootoutScore"] = null;
               if (gameState["period"] === "SO") {
-                  let homeShootoutScore = current["shootoutInfo"]["home"]["scores"] + " goals/" +  current["shootoutInfo"]["home"]["attempts"] + " attempts";
-                  let awayShootoutScore = current["shootoutInfo"]["away"]["scores"] + " goals/" +  current["shootoutInfo"]["away"]["attempts"] + " attempts";
-                  gameState["homeShootoutScore"] = homeShootoutScore;
-                  gameState["awayShootoutScore"] = awayShootoutScore;
+                  let homeShootoutScore = current["shootoutInfo"]["home"]["scores"] + "/" +  current["shootoutInfo"]["home"]["attempts"];
+                  let awayShootoutScore = current["shootoutInfo"]["away"]["scores"] + "/" +  current["shootoutInfo"]["away"]["attempts"];
+                  homeTeam["shootoutScore"] = homeShootoutScore;
+                  awayTeam["shootoutScore"] = awayShootoutScore;
               }
               gameState["home"] = homeTeam;
               gameState["away"] = awayTeam;
