@@ -104,7 +104,7 @@ function createGame(gameid) {
           gameObj["allGoals"] = [];
           gameObj["currentState"] = {};
           // Save to local storage
-          chrome.storage.local.set({ currentGame: gameObj  }, function () {
+          chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
             console.log("Game have been saved to local storage: " + gameObj);
             console.log(gameObj);
             resolve(gameObj);
@@ -118,31 +118,35 @@ function createGame(gameid) {
     return retprom;
   }
 
-  function getAllGoalsScored(gameid, gameson) {
+  function getAllGoalsScored(gameid) {
       let retprom = new Promise((resolve,reject) => {
           GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
               gameData = game["liveData"]["plays"]["allPlays"];
               goals = [];
               firstGoalFound = false;
-              for(let i = gameData.length - 1; i >= 0; i--) {
-                  let gameEvent = gameData[i];
-                  let gameEventType = gameEvent["result"]["eventTypeId"];
-                  if (gameEventType.valueOf() === "GOAL") {
-                      if (firstGoalFound == false && gameson["allGoals"].length > 0) {
-                          if (gameson["allGoals"][0]["about"]["eventId"] == gameEvent["about"]["eventId"]) {
-                              resolve(gameson["allGoals"]);
-                              return;
-                          } else {
-                              firstGoalFound = true;
-                              goals.push(gameEvent);
-                          }
-                      } else {
-                          goals.push(gameEvent);
-                      }
-                  }
-              }
-              resolve(goals);
-              return;
+              let gameson;
+                  chrome.storage.local.get(["currentGame"], function(result) {  
+                    gameson = result.currentGame;
+                    for(let i = gameData.length - 1; i >= 0; i--) {
+                        let gameEvent = gameData[i];
+                        let gameEventType = gameEvent["result"]["eventTypeId"];
+                        if (gameEventType.valueOf() === "GOAL") {
+                            if (firstGoalFound == false && gameson["allGoals"].length > 0) {
+                                if (gameson["allGoals"][0]["about"]["eventId"] == gameEvent["about"]["eventId"]) {
+                                    resolve(gameson["allGoals"]);
+                                    return;
+                                } else {
+                                    firstGoalFound = true;
+                                    goals.push(gameEvent);
+                                }
+                            } else {
+                                goals.push(gameEvent);
+                            }
+                        }
+                    }
+                    resolve(goals);
+                    return;
+                  });
           }).catch((err) => {
               reject("Error retrieving game data: " + err);
               return;
@@ -151,3 +155,71 @@ function createGame(gameid) {
       return retprom;
   }
   
+  function getGameState(gameid) {
+      let retprom = new Promise((resolve,reject) => {
+          GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
+              let current = game["liveData"]["linescore"];
+              let homeTeamAPI = current["teams"]["home"];
+              let awayTeamAPI = current["teams"]["away"];
+              let homeTeam = {};
+              let awayTeam = {};
+              homeTeam["goals"] = homeTeamAPI["goals"];
+              homeTeam["shots"] = homeTeamAPI["shotsOnGoal"];
+              homeTeam["powerplay"] = homeTeamAPI["powerPlay"];
+              homeTeam["goaliePulled"] = homeTeamAPI["goaliePulled"];
+              awayTeam["goals"] = awayTeamAPI["goals"];
+              awayTeam["shots"] = awayTeamAPI["shotsOnGoal"];
+              awayTeam["powerplay"] = awayTeamAPI["powerPlay"];
+              awayTeam["goaliePulled"] = awayTeamAPI["goaliePulled"];
+              let gameState = {};
+              gameState["period"] = current["currentPeriodOrdinal"];
+              gameState["periodTimeRemaining"] = current["currentPeriodTimeRemaining"];
+              gameState["homeShootoutScore"] = null;
+              gameState["awayShootoutScore"] = null;
+              if (gameState["period"].valueOf == "SO") {
+                  let homeShootoutScore = current["shootoutInfo"]["home"]["scores"] + " goals/" +  current["shootoutInfo"]["home"]["attempts"] + " attempts";
+                  let awayShootoutScore = current["shootoutInfo"]["away"]["scores"] + " goals/" +  current["shootoutInfo"]["away"]["attempts"] + " attempts";
+                  gameState["homeShootoutScore"] = homeShootoutScore;
+                  gameState["awayShootoutScore"] = awayShootoutScore;
+              }
+              gameState["home"] = homeTeam;
+              gameState["away"] = awayTeam;
+              resolve(gameState);
+              return;
+          }).catch((err) => {
+              reject(err);
+              return;
+          })
+      });
+      return retprom;
+  }
+
+  function updateGameStatus() {
+    let retprom = new Promise((resolve,reject) => {
+        try {
+            chrome.storage.local.get(["currentGame"], function(result) {
+                let game = result.currentGame;
+                let gameId = game["id"];
+                getAllGoalsScored(gameId).then((goals) => {
+                    game["allGoals"] = goals;
+                    return getGameState(gameId);
+                }).then((gameState) => {
+                    game["currentState"] = gameState;
+                    chrome.storage.local.set({ "currentGame": game}, function () {
+                        console.log("Game has been updated");
+                        console.log(game);
+                        resolve(game);
+                        return;
+                      });
+                }).catch((err) => {
+                    reject("Game could not be updated due to: " + err);
+                    return;
+                })
+            });
+        } catch (err) {
+            throw "Game could not be updated due to: " + err;
+            
+        }
+    });
+    return retprom;
+  }

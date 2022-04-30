@@ -91,21 +91,14 @@ document.getElementById("button").addEventListener("click", function () {
   //     console.log("error");
   //     console.log(err);
   //   });
-  findGameForTeam("Vancouver Canucks", "2022-04-10")
-    .then((gameId) => {
-      console.log(gameId);
-    })
-    .catch((err) => {
-      console.log("error");
-      console.log(err);
-    });
 
   initTeams();
   createGame("2021021175").then((gameObj) => {
-    return getAllGoalsScored("2021021175",gameObj);
-  }).then((goals) => {
-    console.log(goals);
+    return updateGameStatus();
+  }).then((gameStatus) => {
+    console.log("updated: ");
+    console.log(gameStatus);
   }).catch((err) => {
-    console.log(err);
+    console.log(err); 
   });
 });
