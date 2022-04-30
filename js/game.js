@@ -176,7 +176,7 @@ function createGame(gameid) {
               gameState["periodTimeRemaining"] = current["currentPeriodTimeRemaining"];
               gameState["homeShootoutScore"] = null;
               gameState["awayShootoutScore"] = null;
-              if (gameState["period"].valueOf == "SO") {
+              if (gameState["period"] === "SO") {
                   let homeShootoutScore = current["shootoutInfo"]["home"]["scores"] + " goals/" +  current["shootoutInfo"]["home"]["attempts"] + " attempts";
                   let awayShootoutScore = current["shootoutInfo"]["away"]["scores"] + " goals/" +  current["shootoutInfo"]["away"]["attempts"] + " attempts";
                   gameState["homeShootoutScore"] = homeShootoutScore;

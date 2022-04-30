@@ -93,7 +93,7 @@ document.getElementById("button").addEventListener("click", function () {
   //   });
 
   initTeams();
-  createGame("2021021175").then((gameObj) => {
+  createGame("2021021269").then((gameObj) => {
     return updateGameStatus();
   }).then((gameStatus) => {
     console.log("updated: ");
