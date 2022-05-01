@@ -23,7 +23,7 @@ function findGames(date) {
  * Find the NHL game involving the passed in team on the given date
  * @param {String} team Name of the team 
  * @param {String} date Date of the game - Must be in format "YYYY-MM-DD"
- * @returns the NHL game as a JSON object, else an exception is thrown
+ * @returns a Promise that resolves with the NHL game as a JSON object, else an exception is thrown
  */
 function findGameForTeam(team, date) {
     let retprom = new Promise((resolve,reject) => {
@@ -88,8 +88,8 @@ function matchTeamName(teamNameA, teamNameB) {
 
 /**
  * Creates an internal record of a NHL game and saves it to local storage.
- * @param {String} gameid Internal ID of a NHL game 
- * @returns a Promise that resolves when the internal record of the game is created and saved to local storage
+ * @param {String} gameid API internal ID of a NHL Game 
+ * @returns a Promise that resolves with an JSON object when the internal record of the game is created and saved to local storage
  */
 function createGame(gameid) {
     let retprom = new Promise((resolve,reject) => {
@@ -118,6 +118,11 @@ function createGame(gameid) {
     return retprom;
   }
 
+  /**
+   * Gets a live update for the game specified by gameid and returns all goals scored in the game at the present moment as an array
+   * @param {String} gameid API internal ID of a NHL Game
+   * @returns a Promise that resolves with an array that contains all goals scored currently from last to first.
+   */
   function getAllGoalsScored(gameid) {
       let retprom = new Promise((resolve,reject) => {
           GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
@@ -155,6 +160,11 @@ function createGame(gameid) {
       return retprom;
   }
   
+  /**
+   * Gets a live update for the game specified by gameid and returns the state of the game as an JSON object
+   * @param {String} gameid API internal ID of a NHL Game
+   * @returns a Promise that resolves with the state of the game as an JSON object
+   */
   function getGameState(gameid) {
       let retprom = new Promise((resolve,reject) => {
           GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
@@ -194,6 +204,10 @@ function createGame(gameid) {
       return retprom;
   }
 
+  /**
+   * Updates the game state locally
+   * @returns a Promise that resolves with the updated game object
+   */
   function updateGameStatus() {
     let retprom = new Promise((resolve,reject) => {
         try {
