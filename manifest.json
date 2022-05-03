@@ -19,6 +19,7 @@
         "https://statsapi.web.nhl.com/"
     ],
     "permissions": [
-        "storage"
+        "storage",
+        "alarms"
     ]
   }

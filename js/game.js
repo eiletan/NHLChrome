@@ -103,19 +103,82 @@ function createGame(gameid) {
           gameObj["id"] = gameid;
           gameObj["allGoals"] = [];
           gameObj["currentState"] = {};
-          // Save to local storage
-          chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
-            console.log("Game have been saved to local storage: " + gameObj);
-            console.log(gameObj);
-            resolve(gameObj);
-            return;
-          });
+          gameObj["playoffSeries"] = null;
+          if (gameData["game"]["type"] == "P") {
+              GetFromNHLApi("/tournaments/playoffs?expand=round.series,schedule.game.seriesSummary").then((response) => {
+                   let pogame = findPlayoffGame(response,homeTeam,awayTeam);
+                   gameObj["playoffSeries"] = pogame;
+                   if (pogame != null) {
+                        chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
+                            console.log("Game have been saved to local storage: " + gameObj);
+                            console.log(gameObj);
+                            resolve(gameObj);
+                            return;
+                        });
+                   } else {
+                       throw new Error("Playoff data could not be found for the game. Please try again");
+                   }
+              });
+          } else {
+              // Save to local storage
+            chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
+                console.log("Game have been saved to local storage: " + gameObj);
+                console.log(gameObj);
+                resolve(gameObj);
+                return;
+            });
+          }
         }).catch((err) => {
             reject("Game could not be created due to: " + err);
             return;
         });
     });
     return retprom;
+  }
+
+  function findPlayoffGame(response, teamA, teamB) {
+      let rounds = response["rounds"].length;
+      for (let i = rounds-1; i >= 0; i--) {
+          let seriesnum = response["rounds"][i]["series"].length;
+          for (let j = 0; j < seriesnum; j++) {
+            let pogame = response["rounds"][i]["series"][j];
+            if (pogame["matchupTeams"] != undefined) {
+                let respTeamA = pogame["matchupTeams"][0]["team"]["name"];
+                let respTeamB = pogame["matchupTeams"][1]["team"]["name"];
+                if (matchTeamName(respTeamA,teamA)) {
+                    if (matchTeamName(respTeamB, teamB)) {
+                        let round = i+1;
+                        let gamenum = pogame["currentGame"]["seriesSummary"]["gameLabel"];
+                        let seriesStatus = pogame["currentGame"]["seriesSummary"]["seriesStatusShort"];
+                        if (seriesStatus == "") {
+                            seriesStatus = "Tied at 0-0";
+                        }
+                        let pogameObj = {};
+                        pogameObj["round"] = round;
+                        pogameObj["gamenum"] = gamenum;
+                        pogameObj["seriesStatus"] = seriesStatus;
+                        return pogameObj;
+                    }
+                } else if (matchTeamName(respTeamB,teamA)) {
+                    if (matchTeamName(respTeamA,teamB)) {
+                        let round = i+1;
+                        let gamenum = pogame["currentGame"]["seriesSummary"]["gameLabel"];
+                        let seriesStatus = pogame["currentGame"]["seriesSummary"]["seriesStatusShort"];
+                        if (seriesStatus == "") {
+                            seriesStatus = "Tied at 0-0";
+                        }
+                        let pogameObj = {};
+                        pogameObj["round"] = round;
+                        pogameObj["gamenum"] = gamenum;
+                        pogameObj["seriesStatus"] = seriesStatus;
+                        return pogameObj;
+                    }
+                }
+
+            }
+          }
+      }
+      return null;
   }
 
   /**
