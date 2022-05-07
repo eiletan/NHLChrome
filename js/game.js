@@ -1,3 +1,6 @@
+var notifLength = 15000;
+
+
 /**
  * Find all NHL games occuring on the passed in date
  * @param {String} date Date of the game - Must be in format "YYYY-MM-DD"
@@ -96,10 +99,14 @@ function createGame(gameid) {
       GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((response) => {
           let gameData = response["gameData"];
           let homeTeam = gameData["teams"]["home"]["name"];
+          let homeTeamShort = gameData["teams"]["home"]["abbreviation"];
           let awayTeam = gameData["teams"]["away"]["name"];
+          let awayTeamShort = gameData["teams"]["away"]["abbreviation"];
           let gameObj = {};
           gameObj["home"] = homeTeam;
           gameObj["away"] = awayTeam;
+          gameObj["homeShort"] = homeTeamShort;
+          gameObj["awayShort"] = awayTeamShort;
           gameObj["id"] = gameid;
           gameObj["allGoals"] = [];
           gameObj["currentState"] = {};
@@ -151,7 +158,7 @@ function createGame(gameid) {
                         let gamenum = pogame["currentGame"]["seriesSummary"]["gameLabel"];
                         let seriesStatus = pogame["currentGame"]["seriesSummary"]["seriesStatusShort"];
                         if (seriesStatus == "") {
-                            seriesStatus = "Tied at 0-0";
+                            seriesStatus = "Tied 0-0";
                         }
                         let pogameObj = {};
                         pogameObj["round"] = round;
@@ -206,6 +213,7 @@ function createGame(gameid) {
                                 } else {
                                     firstGoalFound = true;
                                     goals.push(gameEvent);
+
                                 }
                             } else {
                                 goals.push(gameEvent);
@@ -268,7 +276,7 @@ function createGame(gameid) {
   }
 
   /**
-   * Updates the game state locally
+   * Updates the game state locally, and sends notification if a team has scored
    * @returns a Promise that resolves with the updated game object
    */
   function updateGameStatus() {
@@ -278,6 +286,25 @@ function createGame(gameid) {
                 let game = result.currentGame;
                 let gameId = game["id"];
                 getAllGoalsScored(gameId).then((goals) => {
+                    if (game["allGoals"].length != goals.length) {
+                        chrome.storage.local.get(["teams"], function(result) {
+                            let intteams = result.teams;
+                            let goalObj = goals[0];
+                            let teamName = goalObj["team"]["name"];
+                            let teamLogo = intteams[teamName]["logo"];
+                            let teamAudio = intteams[teamName]["goalHorn"];
+                            console.log(intteams[teamName]["logo"]);
+                            let goalTitle = goalObj["team"]["triCode"] + " GOAL";
+                            let goalDesc = goalObj["result"]["description"] + " \nTime of the goal: " + goalObj["about"]["ordinalNum"] + ", " + goalObj["about"]["periodTime"]
+                            + ". \n" + game["awayShort"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["homeShort"] + ": " + goalObj["about"]["goals"]["home"];
+                            sendNotification(goalTitle,goalDesc,teamLogo,teamAudio);
+                            game["allGoals"] = goals;
+                            return getGameState(gameId);
+                        })
+                    } else {
+                        game["allGoals"] = goals;
+                        return getGameState(gameId);
+                    }
                     game["allGoals"] = goals;
                     return getGameState(gameId);
                 }).then((gameState) => {
@@ -300,3 +327,38 @@ function createGame(gameid) {
     });
     return retprom;
   }
+
+
+  function playSound(uri) {
+    let url = chrome.runtime.getURL('audio.html');
+  
+    url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
+  
+    chrome.windows.create({
+        type: 'popup',
+        focused: false,
+        top: 1,
+        left: 1,
+        height: 1,
+        width: 1,
+        url,
+    })
+  }
+
+
+  function sendNotification(title,message,iconUrl,audioUrl) {
+    let opt = {
+        title: title,
+        message: message,
+        type: "basic",
+        iconUrl: iconUrl,
+        silent: true,
+        requireInteraction: true
+    }
+    chrome.notifications.create("",opt,function (id) {
+        timer = setTimeout(function() {chrome.notifications.clear(id);},notifLength);
+    });
+    playSound(audioUrl);
+  }
+
+  

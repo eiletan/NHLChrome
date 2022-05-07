@@ -68,8 +68,8 @@
     {
         "name": "Edmonton Oilers",
         "color": "#041E42",
-        "logo": "data/icons/Edmonton Oliers.png",
-        "goalHorn": "data/audio/Edmonton Oliers.mp3"
+        "logo": "data/icons/Edmonton Oilers.png",
+        "goalHorn": "data/audio/Edmonton Oilers.mp3"
     },
     {
         "name": "Florida Panthers",
