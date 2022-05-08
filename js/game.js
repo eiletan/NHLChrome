@@ -294,9 +294,10 @@ function createGame(gameid) {
                             let teamLogo = intteams[teamName]["logo"];
                             let teamAudio = intteams[teamName]["goalHorn"];
                             console.log(intteams[teamName]["logo"]);
-                            let goalTitle = goalObj["team"]["triCode"] + " GOAL";
-                            let goalDesc = goalObj["result"]["description"] + " \nTime of the goal: " + goalObj["about"]["ordinalNum"] + ", " + goalObj["about"]["periodTime"]
-                            + ". \n" + game["awayShort"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["homeShort"] + ": " + goalObj["about"]["goals"]["home"];
+                            let goalTitle = game["awayShort"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["homeShort"] + ": " + goalObj["about"]["goals"]["home"]
+                            + " (" + goalObj["team"]["triCode"] + " GOAL)";
+                            let goalDesc = goalObj["result"]["description"] + " \n" + goalObj["about"]["ordinalNum"] + " @ " + goalObj["about"]["periodTime"]
+                            ;
                             sendNotification(goalTitle,goalDesc,teamLogo,teamAudio);
                             game["allGoals"] = goals;
                             return getGameState(gameId);
@@ -330,19 +331,22 @@ function createGame(gameid) {
 
 
   function playSound(uri) {
-    let url = chrome.runtime.getURL('audio.html');
+    chrome.storage.local.get(["MAXHEIGHT","MAXWIDTH"], function (result) {
+        let url = chrome.runtime.getURL('audio.html');
   
-    url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
-  
-    chrome.windows.create({
-        type: 'popup',
-        focused: false,
-        top: 1,
-        left: 1,
-        height: 1,
-        width: 1,
-        url,
-    })
+        url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
+      
+        chrome.windows.create({
+            type: 'popup',
+            focused: false,
+            top: result.MAXHEIGHT-100,
+            left: result.MAXWIDTH-200,
+            height: 1,
+            width: 1,
+            url,
+        });
+    });
+    
   }
 
 
@@ -360,5 +364,3 @@ function createGame(gameid) {
     });
     playSound(audioUrl);
   }
-
-  

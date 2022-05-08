@@ -11,7 +11,7 @@ chrome.alarms.onAlarm.addListener(onAlarm);
 function onAlarm(alarm) {
     console.log("refreshing!");
     initTeams();
-    createGame("2021030153").then((gameObj) => {
+    createGame("2021030173").then((gameObj) => {
       return updateGameStatus();
     }).then((gameStatus) => {
       console.log("updated: ");

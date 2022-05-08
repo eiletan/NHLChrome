@@ -1,3 +1,13 @@
+chrome.storage.local.get(["MAXHEIGHT","MAXWIDTH"], function (result) {
+  if (result.MAXHEIGHT == undefined || result.MAXWIDTH == undefined) {
+    chrome.storage.local.set({"MAXHEIGHT": window.screen.availHeight, "MAXWIDTH": window.screen.availWidth}, function () {
+      console.log("height and width stored");
+    });
+  }
+})
+
+
+
 document.getElementById("button").addEventListener("click", function () {
   console.log(new Date().toLocaleDateString("en-CA",{timeZone: "America/New_York"}));
 });
@@ -35,11 +45,11 @@ document.getElementById("buttonClear").addEventListener("click", function () {
   chrome.windows.create({
       type: 'popup',
       focused: false,
-      top: 1,
-      left: 1,
+      top: window.screen.availHeight-100,
+      left: window.screen.availWidth-200,
       height: 1,
       width: 1,
-      url,
+      url
   })
   });
   
