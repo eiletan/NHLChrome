@@ -293,11 +293,14 @@ function createGame(gameid) {
                             let teamName = goalObj["team"]["name"];
                             let teamLogo = intteams[teamName]["logo"];
                             let teamAudio = intteams[teamName]["goalHorn"];
+                            let strength = goalObj["result"]["strength"]["code"];
                             console.log(intteams[teamName]["logo"]);
                             let goalTitle = game["awayShort"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["homeShort"] + ": " + goalObj["about"]["goals"]["home"]
                             + " (" + goalObj["team"]["triCode"] + " GOAL)";
-                            let goalDesc = goalObj["result"]["description"] + " \n" + goalObj["about"]["ordinalNum"] + " @ " + goalObj["about"]["periodTime"]
-                            ;
+                            // Strip point totals from the goal description because it can be initially inaccurate 
+                            let goalDescriptor = goalObj["result"]["description"].replace(/ \((.*?)\)/g,"");
+                            let goalDesc = goalDescriptor + " \n" + goalObj["about"]["ordinalNum"] + " @ " + goalObj["about"]["periodTime"]
+                            + " (" + strength + ")" ;
                             sendNotification(goalTitle,goalDesc,teamLogo,teamAudio);
                             game["allGoals"] = goals;
                             return getGameState(gameId);
@@ -313,6 +316,7 @@ function createGame(gameid) {
                     chrome.storage.local.set({ "currentGame": game}, function () {
                         console.log("Game has been updated");
                         console.log(game);
+                        chrome.runtime.sendMessage({gameUpdate: game});
                         resolve(game);
                         return;
                       });
@@ -331,22 +335,49 @@ function createGame(gameid) {
 
 
   function playSound(uri) {
-    chrome.storage.local.get(["MAXHEIGHT","MAXWIDTH"], function (result) {
-        let url = chrome.runtime.getURL('audio.html');
+    chrome.storage.local.get(["MAXHEIGHT", "MAXWIDTH"], function (heightResult) {
+      let url = chrome.runtime.getURL("audio.html");
+      url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
   
-        url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
-      
-        chrome.windows.create({
-            type: 'popup',
-            focused: false,
-            top: result.MAXHEIGHT-100,
-            left: result.MAXWIDTH-200,
-            height: 1,
-            width: 1,
-            url,
-        });
+      // Create window to play sound if one does not exist already
+      chrome.storage.local.get(["soundTabId"], function (result) {
+        let soundTabId = result.soundTabId;
+        // If sound tab doesn't exist, create one and save the id into local storage
+        if (soundTabId == undefined) {
+          createWindowForSound(url,heightResult);
+        } else {
+          // If it exists, check if it is actually an id of an open tab
+          chrome.tabs.get(soundTabId, function () {
+            // If tab isn't actually open, then create one and save the id into local storage
+            // Else reuse the open tab to play the goal horn
+            if (chrome.runtime.lastError) {
+              createWindowForSound(url,heightResult);
+            } else {
+              chrome.tabs.update(soundTabId, { url: url });
+            }
+          });
+        }
+      });
     });
-    
+  }
+  
+
+
+  
+  function createWindowForSound(url,dimensions) {
+    chrome.windows.create({
+        type: 'popup',
+        focused: true,
+        top: dimensions.MAXHEIGHT-100,
+        left: dimensions.MAXWIDTH-200,
+        height: 1,
+        width: 1,
+        url,
+    }, function (Window) {
+        // Get window and store the id of the tab so it can be reused to play goal horns
+        let tabId = Window["tabs"][0]["id"];
+        chrome.storage.local.set({"soundTabId": tabId});
+    });
   }
 
 
@@ -360,7 +391,8 @@ function createGame(gameid) {
         requireInteraction: true
     }
     chrome.notifications.create("",opt,function (id) {
-        timer = setTimeout(function() {chrome.notifications.clear(id);},notifLength);
+        playSound(audioUrl);
+        timer = setTimeout(function() {chrome.notifications.clear(id);},notifLength); 
     });
-    playSound(audioUrl);
+    
   }

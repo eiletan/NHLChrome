@@ -6,6 +6,24 @@ chrome.storage.local.get(["MAXHEIGHT","MAXWIDTH"], function (result) {
   }
 })
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  try {
+    let gameUpdate = request.gameUpdate;
+    console.log("message received")
+    if (gameUpdate != undefined) {
+      console.log("printing gameUpdate from service worker");
+      console.log(gameUpdate);
+      let el = document.getElementById("score");
+      let score = gameUpdate["awayShort"] + ": " + gameUpdate["currentState"]["away"]["goals"] + " | " + gameUpdate["homeShort"] + ": " + gameUpdate["currentState"]["home"]["goals"];
+      el.innerHTML = score;
+      return true;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  
+})
+
 
 
 document.getElementById("button").addEventListener("click", function () {
@@ -37,21 +55,31 @@ document.getElementById("buttonClear").addEventListener("click", function () {
       type: "basic",
       iconUrl:  teams["Vancouver Canucks"]["logo"],
       silent: true
-  });
-  let url = chrome.runtime.getURL('audio.html');
+    });
+    chrome.storage.local.get(["MAXHEIGHT", "MAXWIDTH"], function (heightResult) {
+      let url = chrome.runtime.getURL("audio.html");
+      url += "?volume=0.6&src=" + teams["Vancouver Canucks"]["goalHorn"] + "&length=" + notifLength;
   
-  url += "?volume=0.5&src=" + teams["Vancouver Canucks"]["goalHorn"] + "&length=15000";
+      // Create window to play sound if one does not exist already
+      chrome.storage.local.get(["soundTabId"], function (result) {
+        let soundTabId = result.soundTabId;
+        console.log(soundTabId);
+        if (soundTabId == undefined) {
+          createWindowForSound(url,heightResult);
+        } else {
+          chrome.tabs.get(soundTabId, function () {
+            if (chrome.runtime.lastError) {
+              createWindowForSound(url,heightResult);
+            } else {
+              chrome.tabs.update(soundTabId, { url: url });
+            }
+          });
+        }
+      });
+    });
 
-  chrome.windows.create({
-      type: 'popup',
-      focused: false,
-      top: window.screen.availHeight-100,
-      left: window.screen.availWidth-200,
-      height: 1,
-      width: 1,
-      url
-  })
-  });
+})
+
   
 });
 
