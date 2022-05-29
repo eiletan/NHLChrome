@@ -97,48 +97,48 @@ function matchTeamName(teamNameA, teamNameB) {
 function createGame(gameid) {
     let retprom = new Promise((resolve,reject) => {
       GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((response) => {
-          let gameData = response["gameData"];
-          let homeTeam = gameData["teams"]["home"]["name"];
-          let homeTeamShort = gameData["teams"]["home"]["abbreviation"];
-          let awayTeam = gameData["teams"]["away"]["name"];
-          let awayTeamShort = gameData["teams"]["away"]["abbreviation"];
-          let gameObj = {};
-          gameObj["home"] = homeTeam;
-          gameObj["away"] = awayTeam;
-          gameObj["homeShort"] = homeTeamShort;
-          gameObj["awayShort"] = awayTeamShort;
-          gameObj["id"] = gameid;
-          gameObj["allGoals"] = [];
-          gameObj["currentState"] = {};
-          gameObj["playoffSeries"] = null;
-          if (gameData["game"]["type"] == "P") {
-              GetFromNHLApi("/tournaments/playoffs?expand=round.series,schedule.game.seriesSummary").then((response) => {
-                   let pogame = findPlayoffGame(response,homeTeam,awayTeam);
-                   gameObj["playoffSeries"] = pogame;
-                   if (pogame != null) {
-                        chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
-                            console.log("Game have been saved to local storage: " + gameObj);
-                            console.log(gameObj);
-                            resolve(gameObj);
-                            return;
-                        });
-                   } else {
-                       throw new Error("Playoff data could not be found for the game. Please try again");
-                   }
+        chrome.storage.local.get(["teams"], function(result) {
+            let teams = result.teams;
+            let gameData = response["gameData"];
+            let homeTeam = gameData["teams"]["home"]["name"];
+            let awayTeam = gameData["teams"]["away"]["name"];
+            let gameObj = {};
+            gameObj["home"] = teams[homeTeam];
+            gameObj["away"] = teams[awayTeam];
+            gameObj["id"] = gameid;
+            gameObj["allGoals"] = [];
+            gameObj["currentState"] = {};
+            gameObj["playoffSeries"] = null;
+            if (gameData["game"]["type"] == "P") {
+                GetFromNHLApi("/tournaments/playoffs?expand=round.series,schedule.game.seriesSummary").then((response) => {
+                     let pogame = findPlayoffGame(response,homeTeam,awayTeam);
+                     gameObj["playoffSeries"] = pogame;
+                     if (pogame != null) {
+                          chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
+                              console.log("Game have been saved to local storage: " + gameObj);
+                              console.log(gameObj);
+                              resolve(gameObj);
+                              return;
+                          });
+                     } else {
+                         throw new Error("Playoff data could not be found for the game. Please try again");
+                     }
+                });
+            } else {
+                // Save to local storage
+              chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
+                  console.log("Game have been saved to local storage: " + gameObj);
+                  console.log(gameObj);
+                  resolve(gameObj);
+                  return;
               });
-          } else {
-              // Save to local storage
-            chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
-                console.log("Game have been saved to local storage: " + gameObj);
-                console.log(gameObj);
-                resolve(gameObj);
-                return;
-            });
-          }
-        }).catch((err) => {
-            reject("Game could not be created due to: " + err);
-            return;
+            }
+          }).catch((err) => {
+              reject("Game could not be created due to: " + err);
+              return;
+          });
         });
+         
     });
     return retprom;
   }
@@ -287,30 +287,31 @@ function createGame(gameid) {
                 let gameId = game["id"];
                 getAllGoalsScored(gameId).then((goals) => {
                     if (game["allGoals"].length != goals.length) {
-                        chrome.storage.local.get(["teams"], function(result) {
-                            let intteams = result.teams;
-                            let goalObj = goals[0];
-                            let teamName = goalObj["team"]["name"];
-                            let teamLogo = intteams[teamName]["logo"];
-                            let teamAudio = intteams[teamName]["goalHorn"];
-                            let strength = goalObj["result"]["strength"]["code"];
-                            console.log(intteams[teamName]["logo"]);
-                            let goalTitle = game["awayShort"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["homeShort"] + ": " + goalObj["about"]["goals"]["home"]
-                            + " (" + goalObj["team"]["triCode"] + " GOAL)";
-                            // Strip point totals from the goal description because it can be initially inaccurate 
-                            let goalDescriptor = goalObj["result"]["description"].replace(/ \((.*?)\)/g,"");
-                            let goalDesc = goalDescriptor + " \n" + goalObj["about"]["ordinalNum"] + " @ " + goalObj["about"]["periodTime"]
-                            + " (" + strength + ")" ;
-                            sendNotification(goalTitle,goalDesc,teamLogo,teamAudio);
-                            game["allGoals"] = goals;
-                            return getGameState(gameId);
-                        })
+                        let goalObj = goals[0];
+                        let teamName = goalObj["team"]["name"];
+                        let teamLogo;
+                        let teamAudio;
+                        if (matchTeamName(teamName,game["home"]["name"])) {
+                            teamLogo = game["home"]["logo"];
+                            teamAudio = game["home"]["goalHorn"];
+                        } else {
+                            teamLogo = game["away"]["logo"];
+                            teamAudio = game["away"]["goalHorn"];
+                        }
+                        let strength = goalObj["result"]["strength"]["code"];
+                        let goalTitle = game["away"]["abbreviation"] + ": " + goalObj["about"]["goals"]["away"] + " | " + game["home"]["abbreviation"] + ": " + goalObj["about"]["goals"]["home"]
+                        + " (" + goalObj["team"]["triCode"] + " GOAL)";
+                        // Strip point totals from the goal description because it can be initially inaccurate 
+                        let goalDescriptor = goalObj["result"]["description"].replace(/ \((.*?)\)/g,"");
+                        let goalDesc = goalDescriptor + " \n" + goalObj["about"]["ordinalNum"] + " @ " + goalObj["about"]["periodTime"]
+                        + " (" + strength + ")" ;
+                        sendNotification(goalTitle,goalDesc,teamLogo,teamAudio);
+                        game["allGoals"] = goals;
+                        return getGameState(gameId);
                     } else {
                         game["allGoals"] = goals;
                         return getGameState(gameId);
                     }
-                    game["allGoals"] = goals;
-                    return getGameState(gameId);
                 }).then((gameState) => {
                     game["currentState"] = gameState;
                     chrome.storage.local.set({ "currentGame": game}, function () {

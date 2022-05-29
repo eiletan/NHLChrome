@@ -1,0 +1,90 @@
+
+.teamInfo, .gameScoreBoardTable{
+    font-family: 'Pragati Narrow', sans-serif;
+    font-size: 20px;
+}
+
+.teamGameStatus, .goalInfo {
+    font-style: italic;
+    font-weight: bold;
+    color: aliceblue;
+    text-shadow: navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px;
+}
+
+.gameScoreBoardTable {
+    border: solid;
+    font-size: 40px;
+    border-radius: 15px;
+    border-spacing: 0px;
+}
+
+.gameScore {
+    display: inline-block;
+    /* border: solid; */
+    vertical-align: middle;
+    border-radius: 15px;
+    /* color: */
+}
+
+
+.teamScoreboardAbbr, .teamScoreboardScore {
+    border-right: 3px solid;
+    vertical-align: middle;
+    text-align: center;
+    background-color: Gainsboro;
+    /* text-shadow: white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px; */
+}
+
+.teamOneScoreboardAbbr {
+    background-color: blue;
+}
+
+
+.teamTwoScoreboardAbbr {
+    background-color: yellow;
+}
+
+
+.teamScoreboardAbbr {
+    color: white;
+    min-width: 80px;
+    border-color: black;
+    text-shadow: black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px,
+    black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px;
+}
+
+.teamScoreboardScore {
+    min-width: 75px;
+}
+
+.teamScoreboardLogo {
+    background-color: Gainsboro;
+}
+
+
+.teamOneScoreboardLogo {
+    background-color: blue;
+    border-right: 3px solid;
+    min-width: 75px;
+    min-height: 75px;
+}
+
+.teamOneScoreboardLogo {
+    border-top-left-radius: 13px;
+    border-bottom-left-radius: 13px;
+}
+
+.teamTwoScoreboardLogo {
+    background-color: yellow;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+
+
+.scoreboardLogoImg {
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
