@@ -104,13 +104,13 @@ function setScoreboard(game) {
   let team1Logo = document.getElementsByClassName("scoreboardLogoImg teamOneScoreboardLogoImg")[0];
   let team2Logo = document.getElementsByClassName("scoreboardLogoImg teamTwoScoreboardLogoImg")[0];
   team1Abr.innerHTML = game["away"]["abbreviation"];
-  team1Abr.style.background = game["away"]["color"];
+  team1Abr.style.backgroundColor = game["away"]["color"];
   team2Abr.innerHTML = game["home"]["abbreviation"];
-  team2Abr.style.background = game["home"]["color"];
+  team2Abr.style.backgroundColor = game["home"]["color"];
   team1Score.innerHTML = game["currentState"]["away"]["goals"];
   team2Score.innerHTML = game["currentState"]["home"]["goals"];
   team1Logo.src = game["away"]["logo"];
-  team1Logo.style.background = game["away"]["color"];
+  team1Logo.style.backgroundColor = game["away"]["color"];
   team2Logo.src = game["home"]["logo"];
-  team2Logo.style.background = game["home"]["color"];
+  team2Logo.style.backgroundColor = game["home"]["color"];
 }

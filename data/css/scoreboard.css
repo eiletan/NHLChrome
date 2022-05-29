@@ -67,6 +67,9 @@
     border-right: 3px solid;
     min-width: 75px;
     min-height: 75px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden
 }
 
 .teamOneScoreboardLogo {
@@ -78,6 +81,9 @@
     background-color: yellow;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden
 }
 
 
