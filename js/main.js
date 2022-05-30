@@ -103,14 +103,64 @@ function setScoreboard(game) {
   let team2Score = document.getElementsByClassName("gameScoreBoardInfo teamScoreboardScore teamTwoScoreboardScore")[0];
   let team1Logo = document.getElementsByClassName("scoreboardLogoImg teamOneScoreboardLogoImg")[0];
   let team2Logo = document.getElementsByClassName("scoreboardLogoImg teamTwoScoreboardLogoImg")[0];
+  let team1SOG = document.getElementsByClassName("gameScoreBoardStatusInfo teamShotsOnGoal teamOneScoreboardShotsOnGoal")[0];
+  let team2SOG = document.getElementsByClassName("gameScoreBoardStatusInfo teamShotsOnGoal teamTwoScoreboardShotsOnGoal")[0];
+  let team1Strength = document.getElementsByClassName("gameScoreBoardStatusInfo teamStrengthStatus teamOneScoreboardStrength")[0];
+  let team2Strength = document.getElementsByClassName("gameScoreBoardStatusInfo teamStrengthStatus teamTwoScoreboardStrength")[0];
+  let gameTime = document.getElementsByClassName("gameScoreBoardStatusInfo gameTime")[0];
+  let gamePeriod = document.getElementsByClassName("gameScoreBoardStatusInfo gamePeriod")[0];
   team1Abr.innerHTML = game["away"]["abbreviation"];
   team1Abr.style.backgroundColor = game["away"]["color"];
   team2Abr.innerHTML = game["home"]["abbreviation"];
   team2Abr.style.backgroundColor = game["home"]["color"];
+  
   team1Score.innerHTML = game["currentState"]["away"]["goals"];
   team2Score.innerHTML = game["currentState"]["home"]["goals"];
+  
   team1Logo.src = game["away"]["logo"];
   team1Logo.style.backgroundColor = game["away"]["color"];
   team2Logo.src = game["home"]["logo"];
   team2Logo.style.backgroundColor = game["home"]["color"];
+
+  let gameState = game["currentState"];
+
+  team1SOG.innerHTML = "SOG: " + gameState["away"]["shots"];
+  team2SOG.innerHTML = "SOG: " + gameState["home"]["shots"];
+
+  if (gameState["period"].valueOf() == "SO") {
+    team1SOG.innerHTML = gameState["away"]["shootoutScore"];
+    team2SOG.innerHTML = gameState["home"]["shootoutScore"];
+  }
+  
+  if (gameState["away"]["powerplay"] == true) {
+    team1Strength.innerHTML = "<b>PP</b>";
+  }
+  else if (gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
+    team1Strength.innerHTML = "<b>PP <br> EN</b>";
+  }
+  else if (gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
+    team1Strength.innerHTML = "<b>EN</b>";
+  }
+  else {
+    team1Strength.innerHTML = "";
+  }
+
+  if (gameState["home"]["powerplay"] == true) {
+    team2Strength.innerHTML = "<b>PP</b>";
+  }
+  else if (gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
+    team2Strength.innerHTML = "<b>PP <br> EN</b>";
+  }
+  else if (gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
+    team2Strength.innerHTML = "<b>EN</b>";
+  }
+  else {
+    team2Strength.innerHTML = "";
+  }
+
+  gameTime.innerHTML = gameState["periodTimeRemaining"];
+  gamePeriod.innerHTML = gameState["period"];
+
+
+
 }

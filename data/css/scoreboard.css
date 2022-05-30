@@ -12,10 +12,32 @@
 }
 
 .gameScoreBoardTable {
-    border: solid;
+    border: none;
     font-size: 40px;
-    border-radius: 15px;
     border-spacing: 0px;
+}
+
+.gameScoreBoardStatusInfoRow {
+    font-size: 15px;
+    text-align: center;
+}
+
+.gameScoreBoardStatusInfo {
+    border-top: 3px solid;
+    border-right: 3px solid;
+    border-bottom: 3px solid;
+}
+
+.teamOneScoreboardShotsOnGoal {
+    border-top-left-radius: 13px;
+    border-left: 3px solid;
+    border-bottom-left-radius: 13px;
+}
+
+.teamTwoScoreboardShotsOnGoal {
+    border-top-right-radius: 13px;
+    border-right: 3px solid;
+    border-bottom-right-radius: 13px;
 }
 
 .gameScore {
@@ -29,6 +51,8 @@
 
 .teamScoreboardAbbr, .teamScoreboardScore {
     border-right: 3px solid;
+    border-top: 3px solid;
+    border-bottom: 3px solid;
     vertical-align: middle;
     text-align: center;
     background-color: Gainsboro;
@@ -65,20 +89,21 @@
 .teamOneScoreboardLogo {
     background-color: blue;
     border-right: 3px solid;
+    border: 3px solid;
     min-width: 75px;
     min-height: 75px;
+    border-top-left-radius: 13px;
+    border-bottom-left-radius: 13px;
     margin: 0;
     padding: 0;
     overflow: hidden
 }
 
-.teamOneScoreboardLogo {
-    border-top-left-radius: 13px;
-    border-bottom-left-radius: 13px;
-}
 
 .teamTwoScoreboardLogo {
     background-color: yellow;
+    border: 3px solid;
+    border-left: none;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
     margin: 0;
