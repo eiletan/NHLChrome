@@ -1,4 +1,4 @@
-var notifLength = 15000;
+var notifLength = 20000;
 
 
 /**
@@ -172,7 +172,7 @@ function createGame(gameid) {
                         let gamenum = pogame["currentGame"]["seriesSummary"]["gameLabel"];
                         let seriesStatus = pogame["currentGame"]["seriesSummary"]["seriesStatusShort"];
                         if (seriesStatus == "") {
-                            seriesStatus = "Tied at 0-0";
+                            seriesStatus = "Tied 0-0";
                         }
                         let pogameObj = {};
                         pogameObj["round"] = round;

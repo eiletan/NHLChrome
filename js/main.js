@@ -13,10 +13,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (gameUpdate != undefined) {
       console.log("printing gameUpdate from service worker");
       console.log(gameUpdate);
-      let el = document.getElementById("score");
       setScoreboard(gameUpdate);
-      let score = gameUpdate["awayShort"] + ": " + gameUpdate["currentState"]["away"]["goals"] + " | " + gameUpdate["homeShort"] + ": " + gameUpdate["currentState"]["home"]["goals"];
-      el.innerHTML = score;
       return true;
     }
   } catch (err) {
@@ -128,8 +125,8 @@ function setScoreboard(game) {
   team2SOG.innerHTML = "SOG: " + gameState["home"]["shots"];
 
   if (gameState["period"].valueOf() == "SO") {
-    team1SOG.innerHTML = gameState["away"]["shootoutScore"];
-    team2SOG.innerHTML = gameState["home"]["shootoutScore"];
+    team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutScore"];
+    team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutScore"];
   }
   
   if (gameState["away"]["powerplay"] == true) {
@@ -160,7 +157,14 @@ function setScoreboard(game) {
 
   gameTime.innerHTML = gameState["periodTimeRemaining"];
   gamePeriod.innerHTML = gameState["period"];
+  let playoffInfo = document.getElementById("playoffSeriesInfo");
 
+  if (game["playoffSeries"] != null) {
+    playoffInfo.innerHTML = "Round: " + game["playoffSeries"]["round"] + " | " + game["playoffSeries"]["gamenum"] + " | " + game["playoffSeries"]["seriesStatus"];
+    playoffInfo.style.display = "inline";
+  } else {
+    playoffInfo.style.display = "none";    
+  }
 
 
 }
