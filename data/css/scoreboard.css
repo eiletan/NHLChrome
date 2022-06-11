@@ -1,4 +1,9 @@
+@import "/data/css/main.css";
 
+:root {
+    --scoreboardRowHeight: 75px;
+    --borderRadius: 3px
+}
 .teamInfo, .gameScoreBoardTable{
     font-family: 'Pragati Narrow', sans-serif;
     font-size: 20px;
@@ -23,20 +28,20 @@
 }
 
 .gameScoreBoardStatusInfo {
-    border-top: 3px solid;
-    border-right: 3px solid;
-    border-bottom: 3px solid;
+    border-top: var(--borderRadius) solid;
+    border-right: var(--borderRadius) solid;
+    border-bottom: var(--borderRadius) solid;
 }
 
 .teamOneScoreboardShotsOnGoal {
     border-top-left-radius: 13px;
-    border-left: 3px solid;
+    border-left: var(--borderRadius) solid;
     border-bottom-left-radius: 13px;
 }
 
 .teamTwoScoreboardShotsOnGoal {
     border-top-right-radius: 13px;
-    border-right: 3px solid;
+    border-right: var(--borderRadius) solid;
     border-bottom-right-radius: 13px;
 }
 
@@ -50,9 +55,9 @@
 
 
 .teamScoreboardAbbr, .teamScoreboardScore {
-    border-right: 3px solid;
-    border-top: 3px solid;
-    border-bottom: 3px solid;
+    border-right: var(--borderRadius) solid;
+    border-top: var(--borderRadius) solid;
+    border-bottom: var(--borderRadius) solid;
     vertical-align: middle;
     text-align: center;
     background-color: Gainsboro;
@@ -73,12 +78,11 @@
     color: white;
     min-width: 80px;
     border-color: black;
-    text-shadow: black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px,
-    black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px;
+    text-shadow: var(--textShadowForAbbr);
 }
 
 .teamScoreboardScore {
-    min-width: 75px;
+    min-width: var(--scoreboardRowHeight);
 }
 
 .teamScoreboardLogo {
@@ -88,10 +92,10 @@
 
 .teamOneScoreboardLogo {
     background-color: blue;
-    border-right: 3px solid;
-    border: 3px solid;
-    min-width: 75px;
-    min-height: 75px;
+    border-right: var(--borderRadius) solid;
+    border: var(--borderRadius) solid;
+    min-width: var(--scoreboardRowHeight);
+    min-height: var(--scoreboardRowHeight);
     border-top-left-radius: 13px;
     border-bottom-left-radius: 13px;
     margin: 0;
@@ -102,7 +106,7 @@
 
 .teamTwoScoreboardLogo {
     background-color: yellow;
-    border: 3px solid;
+    border: var(--borderRadius) solid;
     border-left: none;
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;

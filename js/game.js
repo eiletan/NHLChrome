@@ -10,12 +10,21 @@ function findGames(date) {
     let gamesList = null;
     let retprom = new Promise((resolve,reject) => {
         GetFromNHLApi("/schedule?date=" + date).then((games) => {
-            gamesList = games["dates"][0]["games"];
-            console.log(gamesList);
-            resolve(gamesList);
+            console.log(games);
+            if (games["dates"].length == 0) {
+                let empty = [];
+                resolve(empty);
+                return;
+            } else {
+                gamesList = games["dates"][0]["games"];
+                console.log(gamesList);
+                resolve(gamesList);
+                return;
+            }
             return;
         }).catch((err) => {
-            reject("Games for " + date + " could not be found. Please try again");
+            reject("An error occurred: Games for " + date + " could not be retrieved. Please try again");
+            console.log(err);
             return;
         });
     });
@@ -377,7 +386,7 @@ function createGame(gameid) {
     }, function (Window) {
         // Get window and store the id of the tab so it can be reused to play goal horns
         let tabId = Window["tabs"][0]["id"];
-        chrome.storage.local.set({"soundTabId": tabId});
+        chrome.storage.local.set({"soundTabId": tabId, "soundWindowId": Window["id"]});
     });
   }
 
