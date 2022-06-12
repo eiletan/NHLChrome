@@ -25,6 +25,8 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
       return updateGameStatus();
     }).then((gameStatus) => {
       // If the game is created and updated successfully, create alarm and send response back to content script
+      // Also open sound window
+      playSound(gameStatus["home"]["goalHorn"]);
       let alarmInfo = {
         "periodInMinutes": 1,
       }

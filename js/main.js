@@ -180,9 +180,16 @@ function displayGamesToday() {
           teamTwoAbbr.className = "gamePreviewsInfo gamePreviewsAbbr gamePreviewsTeamTwoAbbr";
           teamTwoAbbr.innerHTML = homeAbbr;
 
+          let time = document.createElement("td");
+          time.className = "gamePreviewsInfo gamePreviewsTime";
+          let startTime = new Date(game["gameDate"]);
+          startTime = startTime.toLocaleString('en-US', { hour: 'numeric',minute: 'numeric', hour12: true });
+          time.innerHTML = startTime;
+          
+
           let previewRow = document.createElement("tr");
           previewRow.className = "gamePreviews";
-          previewRow.append(teamOneLogo,teamOneAbbr,at,teamTwoAbbr,teamTwoLogo);
+          previewRow.append(teamOneLogo,teamOneAbbr,at,teamTwoAbbr,teamTwoLogo,time);
           console.log(previewRow);
           gamesTable.append(previewRow);
           
