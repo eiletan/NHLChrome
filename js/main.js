@@ -276,7 +276,7 @@ function setScoreboard(game) {
   let playoffInfo = document.getElementById("playoffSeriesInfo");
 
   if (game["playoffSeries"] != null) {
-    playoffInfo.innerHTML = "Round: " + game["playoffSeries"]["round"] + " | " + game["playoffSeries"]["gamenum"] + " | " + game["playoffSeries"]["seriesStatus"];
+    playoffInfo.innerHTML = game["playoffSeries"]["round"] + " | " + game["playoffSeries"]["gamenum"] + " | " + game["playoffSeries"]["seriesStatus"];
     playoffInfo.style.display = "inline";
   } else {
     playoffInfo.style.display = "none";    

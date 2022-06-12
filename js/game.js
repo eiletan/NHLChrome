@@ -170,7 +170,7 @@ function createGame(gameid) {
                             seriesStatus = "Tied 0-0";
                         }
                         let pogameObj = {};
-                        pogameObj["round"] = round;
+                        pogameObj["round"] = response["rounds"][i]["names"]["name"];
                         pogameObj["gamenum"] = gamenum;
                         pogameObj["seriesStatus"] = seriesStatus;
                         return pogameObj;
@@ -184,7 +184,7 @@ function createGame(gameid) {
                             seriesStatus = "Tied 0-0";
                         }
                         let pogameObj = {};
-                        pogameObj["round"] = round;
+                        pogameObj["round"] = response["rounds"][i]["names"]["name"];
                         pogameObj["gamenum"] = gamenum;
                         pogameObj["seriesStatus"] = seriesStatus;
                         return pogameObj;
