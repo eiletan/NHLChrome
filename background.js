@@ -1,5 +1,5 @@
 try {
-    importScripts("js/api.js","js/game.js","js/init.js");
+    importScripts("js/api.js","js/game.js","js/init.js", "js/util.js");
 } catch (err) {
     console.log(err);
 }
@@ -22,20 +22,26 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
   // If this is a message to start tracking a game, call the endpoint to get game data first and then start the recurring schedule
   if (request.gameId != undefined | request.gameId != null) {
     createGame(request.gameId).then((gameObj) => {
-      return updateGameStatus();
-    }).then((gameStatus) => {
       // If the game is created and updated successfully, create alarm and send response back to content script
       // Also open sound window
-      playSound(gameStatus["home"]["goalHorn"]);
-      let alarmInfo = {
-        "periodInMinutes": 1,
-      }
-      chrome.alarms.create("liveGame", alarmInfo);
-      chrome.alarms.get("liveGame", function (alarm) {
-        console.log("liveGame alarm created");
-        console.log(alarm);
+      let gameTime = gameObj["currentState"]["periodTimeRemaining"];
+      // If game is over, don't start tracking
+      if (gameTime.valueOf() == "Final") {
+        stopTrackingGame(gameObj);
         chrome.runtime.sendMessage({createGameSuccess: true});
-      });
+      } else {
+        // Open sound window in advance, playing the home team's goal horn
+        playSound(gameStatus["home"]["goalHorn"]);
+        let alarmInfo = {
+          "periodInMinutes": 1,
+        }
+        chrome.alarms.create("liveGame", alarmInfo);
+        chrome.alarms.get("liveGame", function (alarm) {
+          console.log("liveGame alarm created");
+          console.log(alarm);
+          chrome.runtime.sendMessage({createGameSuccess: true});
+        });
+      }  
     }).catch((err) => {
       console.log(err);
       chrome.runtime.sendMessage({createGameSuccess: false});
@@ -59,14 +65,8 @@ function onAlarm(alarm) {
     console.log("refreshing!");
     updateGameStatus().then((gameStatus) => {
       let gameTime = gameStatus["currentState"]["periodTimeRemaining"];
-      // If game is over, stop tracking and close the sound window
       if (gameTime.valueOf() == "Final") {
-        chrome.alarms.clear("liveGame");
-        chrome.storage.local.get(["soundWindowId"], function(results) {
-          if (results.soundWindowId != undefined || results.soundWindowId != null ) {
-            chrome.windows.remove(results.soundWindowId);
-          }
-        })
+        stopTrackingGame(gameStatus);
       }
     });
   }
@@ -107,4 +107,20 @@ function createAlarmForDailySchedule() {
       chrome.alarms.create("getScheduleForToday",alarmJson);
     }
   })
+}
+
+
+function stopTrackingGame(game) {
+  chrome.alarms.clear("liveGame");
+  let win = determineWinner(game);
+  let winTitle =  win["winnerShort"] + " wins! " + "(" + win["awayShort"] +  ": " + win["awayGoals"] + " | " + win["homeShort"] +  ": " + win["homeGoals"] + ")";
+  let winMsg = "The " + win["winner"] + " win in " + win["winType"] + "!";
+  sendNotification(winTitle,winMsg,game[win["winnerLoc"]]["logo"],game[win["winnerLoc"]]["goalHorn"]).then((res) => {
+    chrome.storage.local.get(["soundWindowId"], function(results) {
+      if (results.soundWindowId != undefined || results.soundWindowId != null ) {
+        timer = setTimeout(function() {chrome.windows.remove(results.soundWindowId)},notifLength); 
+      }
+    });
+  });
+
 }

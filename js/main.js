@@ -54,6 +54,7 @@ document.getElementById("button").addEventListener("click", function () {
 
 
 document.getElementById("buttonAlarm").addEventListener("click", function () {
+  chrome.runtime.sendMessage({gameId: "2021020512"});
   var alarmInfo = {
     "periodInMinutes": 1,
   }
@@ -189,13 +190,14 @@ function displayGamesToday() {
 
           let previewRow = document.createElement("tr");
           previewRow.className = "gamePreviews";
+          previewRow.dataset.gameId = game["gamePk"];
           previewRow.append(teamOneLogo,teamOneAbbr,at,teamTwoAbbr,teamTwoLogo,time);
           console.log(previewRow);
           gamesTable.append(previewRow);
           
           // Create event listener for each row which will start the tracking of a game by sending message to service worker
           previewRow.addEventListener('click', function() {
-            chrome.runtime.sendMessage({gameId: game["gamePk"]});
+            chrome.runtime.sendMessage({gameId: previewRow.dataset.gameId});
           });
 
         }
@@ -241,8 +243,8 @@ function setScoreboard(game) {
   team2SOG.innerHTML = "SOG: " + gameState["home"]["shots"];
 
   if (gameState["period"].valueOf() == "SO") {
-    team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutScore"];
-    team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutScore"];
+    team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutGoalsScored"] + "/" + gameState["away"]["shootoutAttempts"];
+    team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutGoalsScored"] + "/" + gameState["home"]["shootoutAttempts"];
   }
   
   if (gameState["away"]["powerplay"] == true) {

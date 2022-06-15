@@ -116,7 +116,7 @@ function createGame(gameid) {
             gameObj["away"] = teams[awayTeam];
             gameObj["id"] = gameid;
             gameObj["allGoals"] = [];
-            gameObj["currentState"] = {};
+            gameObj["currentState"] = extractGameState(response);
             gameObj["playoffSeries"] = null;
             if (gameData["game"]["type"] == "P") {
                 GetFromNHLApi("/tournaments/playoffs?expand=round.series,schedule.game.seriesSummary").then((response) => {
@@ -130,7 +130,7 @@ function createGame(gameid) {
                               return;
                           });
                      } else {
-                         throw new Error("Playoff data could not be found for the game. Please try again");
+                         reject("Playoff data could not be found for the game. Please try again");
                      }
                 });
             } else {
@@ -248,32 +248,7 @@ function createGame(gameid) {
   function getGameState(gameid) {
       let retprom = new Promise((resolve,reject) => {
           GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
-              let current = game["liveData"]["linescore"];
-              let homeTeamAPI = current["teams"]["home"];
-              let awayTeamAPI = current["teams"]["away"];
-              let homeTeam = {};
-              let awayTeam = {};
-              homeTeam["goals"] = homeTeamAPI["goals"];
-              homeTeam["shots"] = homeTeamAPI["shotsOnGoal"];
-              homeTeam["powerplay"] = homeTeamAPI["powerPlay"];
-              homeTeam["goaliePulled"] = homeTeamAPI["goaliePulled"];
-              awayTeam["goals"] = awayTeamAPI["goals"];
-              awayTeam["shots"] = awayTeamAPI["shotsOnGoal"];
-              awayTeam["powerplay"] = awayTeamAPI["powerPlay"];
-              awayTeam["goaliePulled"] = awayTeamAPI["goaliePulled"];
-              let gameState = {};
-              gameState["period"] = current["currentPeriodOrdinal"];
-              gameState["periodTimeRemaining"] = current["currentPeriodTimeRemaining"];
-              homeTeam["shootoutScore"] = null;
-              awayTeam["shootoutScore"] = null;
-              if (gameState["period"] === "SO") {
-                  let homeShootoutScore = current["shootoutInfo"]["home"]["scores"] + "/" +  current["shootoutInfo"]["home"]["attempts"];
-                  let awayShootoutScore = current["shootoutInfo"]["away"]["scores"] + "/" +  current["shootoutInfo"]["away"]["attempts"];
-                  homeTeam["shootoutScore"] = homeShootoutScore;
-                  awayTeam["shootoutScore"] = awayShootoutScore;
-              }
-              gameState["home"] = homeTeam;
-              gameState["away"] = awayTeam;
+              let gameState = extractGameState(game);
               resolve(gameState);
               return;
           }).catch((err) => {
@@ -282,6 +257,43 @@ function createGame(gameid) {
           })
       });
       return retprom;
+  }
+
+
+  function extractGameState(game) {
+    let current = game["liveData"]["linescore"];
+    let homeTeamAPI = current["teams"]["home"];
+    let awayTeamAPI = current["teams"]["away"];
+    let homeTeam = {};
+    let awayTeam = {};
+    homeTeam["goals"] = homeTeamAPI["goals"];
+    homeTeam["shots"] = homeTeamAPI["shotsOnGoal"];
+    homeTeam["powerplay"] = homeTeamAPI["powerPlay"];
+    homeTeam["goaliePulled"] = homeTeamAPI["goaliePulled"];
+    awayTeam["goals"] = awayTeamAPI["goals"];
+    awayTeam["shots"] = awayTeamAPI["shotsOnGoal"];
+    awayTeam["powerplay"] = awayTeamAPI["powerPlay"];
+    awayTeam["goaliePulled"] = awayTeamAPI["goaliePulled"];
+    let gameState = {};
+    gameState["period"] = current["currentPeriodOrdinal"];
+    gameState["periodTimeRemaining"] = current["currentPeriodTimeRemaining"];
+    homeTeam["shootoutGoalsScored"] = null;
+    homeTeam["shootoutAttempts"] = null;
+    awayTeam["shootoutGoalsScored"] = null;
+    awayTeam["shootoutAttempts"] = null;
+    if (gameState["period"] === "SO") {
+        let homeShootoutScore = current["shootoutInfo"]["home"]["scores"];
+        let homeShootoutAttempts = current["shootoutInfo"]["home"]["attempts"];
+        let awayShootoutScore = current["shootoutInfo"]["away"]["scores"];
+        let awayShootoutAttempts = current["shootoutInfo"]["away"]["attempts"];
+        homeTeam["shootoutGoalsScored"] = homeShootoutScore;
+        homeTeam["shootoutAttempts"] = homeShootoutAttempts;
+        awayTeam["shootoutGoalsScored"] = awayShootoutScore;
+        awayTeam["shootoutAttempts"] = awayShootoutAttempts;
+    }
+    gameState["home"] = homeTeam;
+    gameState["away"] = awayTeam;
+    return gameState;
   }
 
   /**
@@ -344,65 +356,43 @@ function createGame(gameid) {
   }
 
 
-  function playSound(uri) {
-    chrome.storage.local.get(["MAXHEIGHT", "MAXWIDTH"], function (heightResult) {
-      let url = chrome.runtime.getURL("audio.html");
-      url += "?volume=0.6&src=" + uri + "&length=" + notifLength;
-  
-      // Create window to play sound if one does not exist already
-      chrome.storage.local.get(["soundTabId"], function (result) {
-        let soundTabId = result.soundTabId;
-        // If sound tab doesn't exist, create one and save the id into local storage
-        if (soundTabId == undefined) {
-          createWindowForSound(url,heightResult);
+  // Returns JSON object with type of win (Regulation or OT), winner, and final score
+  function determineWinner(game) {
+    let state = game["currentState"];
+    let winnerJSON = {};
+    winnerJSON["awayGoals"] = state["away"]["goals"];
+    winnerJSON["homeGoals"] = state["home"]["goals"];
+    winnerJSON["awayShort"] = game["away"]["abbreviation"];
+    winnerJSON["away"] = game["away"]["name"];
+    winnerJSON["homeShort"] = game["home"]["abbreviation"];
+    winnerJSON["home"] = game["home"]["name"];
+    if (state["period"] == "3rd" || state["period"] == "OT") {
+        if (state["period"].valueOf() == "3rd") {
+            winnerJSON["winType"] = "Regulation";
         } else {
-          // If it exists, check if it is actually an id of an open tab
-          chrome.tabs.get(soundTabId, function () {
-            // If tab isn't actually open, then create one and save the id into local storage
-            // Else reuse the open tab to play the goal horn
-            if (chrome.runtime.lastError) {
-              createWindowForSound(url,heightResult);
-            } else {
-              chrome.tabs.update(soundTabId, { url: url });
-            }
-          });
+            winnerJSON["winType"] = "Overtime";
         }
-      });
-    });
-  }
-  
+        if (state["away"]["goals"] > state["home"]["goals"]) {
+            winnerJSON["winnerShort"] = game["away"]["abbreviation"];
+            winnerJSON["winner"] = game["away"]["name"];
+            winnerJSON["winnerLoc"] = "away"; 
 
-
-  
-  function createWindowForSound(url,dimensions) {
-    chrome.windows.create({
-        type: 'popup',
-        focused: true,
-        top: dimensions.MAXHEIGHT-100,
-        left: dimensions.MAXWIDTH-200,
-        height: 1,
-        width: 1,
-        url,
-    }, function (Window) {
-        // Get window and store the id of the tab so it can be reused to play goal horns
-        let tabId = Window["tabs"][0]["id"];
-        chrome.storage.local.set({"soundTabId": tabId, "soundWindowId": Window["id"]});
-    });
-  }
-
-
-  function sendNotification(title,message,iconUrl,audioUrl) {
-    let opt = {
-        title: title,
-        message: message,
-        type: "basic",
-        iconUrl: iconUrl,
-        silent: true,
-        requireInteraction: true
+        } else {
+            winnerJSON["winnerShort"] = game["home"]["abbreviation"];
+            winnerJSON["winner"] = game["home"]["name"];
+            winnerJSON["winnerLoc"] = "home";
+        }
+    } else if (state["period"] == "SO") {
+        winnerJSON["winType"] = "Shootout";
+        if (state["away"]["shootoutGoalsScored"] > state["home"]["shootoutGoalsScored"]) {
+            winnerJSON["winnerShort"] = game["away"]["abbreviation"];
+            winnerJSON["winner"] = game["away"]["name"];
+            winnerJSON["winnerLoc"] = "away";
+        } else {
+            winnerJSON["winnerShort"] = game["home"]["abbreviation"];
+            winnerJSON["winner"] = game["home"]["name"];
+            winnerJSON["winnerLoc"] = "home";
+        }
     }
-    chrome.notifications.create("",opt,function (id) {
-        playSound(audioUrl);
-        timer = setTimeout(function() {chrome.notifications.clear(id);},notifLength); 
-    });
-    
-  }
+    return winnerJSON;
+  } 
