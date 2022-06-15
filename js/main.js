@@ -54,7 +54,7 @@ document.getElementById("button").addEventListener("click", function () {
 
 
 document.getElementById("buttonAlarm").addEventListener("click", function () {
-  chrome.runtime.sendMessage({gameId: "2021020512"});
+  chrome.runtime.sendMessage({gameId: "2021030324"});
   var alarmInfo = {
     "periodInMinutes": 1,
   }
@@ -242,39 +242,49 @@ function setScoreboard(game) {
   team1SOG.innerHTML = "SOG: " + gameState["away"]["shots"];
   team2SOG.innerHTML = "SOG: " + gameState["home"]["shots"];
 
-  if (gameState["period"].valueOf() == "SO") {
+  if (gameState["period"] != undefined && gameState["period"].valueOf() == "SO") {
     team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutGoalsScored"] + "/" + gameState["away"]["shootoutAttempts"];
     team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutGoalsScored"] + "/" + gameState["home"]["shootoutAttempts"];
   }
   
-  if (gameState["away"]["powerplay"] == true) {
+  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true) {
     team1Strength.innerHTML = "<b>PP</b>";
   }
-  else if (gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
+  else if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
     team1Strength.innerHTML = "<b>PP <br> EN</b>";
   }
-  else if (gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
+  else if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
     team1Strength.innerHTML = "<b>EN</b>";
   }
   else {
     team1Strength.innerHTML = "";
   }
 
-  if (gameState["home"]["powerplay"] == true) {
+  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true) {
     team2Strength.innerHTML = "<b>PP</b>";
   }
-  else if (gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
+  else if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
     team2Strength.innerHTML = "<b>PP <br> EN</b>";
   }
-  else if (gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
+  else if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
     team2Strength.innerHTML = "<b>EN</b>";
   }
   else {
     team2Strength.innerHTML = "";
   }
 
-  gameTime.innerHTML = gameState["periodTimeRemaining"];
-  gamePeriod.innerHTML = gameState["period"];
+  if (gameState["periodTimeRemaining"] != undefined) {
+    gameTime.innerHTML = gameState["periodTimeRemaining"];
+  } else {
+    gameTime.innerHTML = "20:00";
+  }
+  
+  if (gameState["period"] != undefined) {
+    gamePeriod.innerHTML = gameState["period"];
+  } else {
+    gamePeriod.innerHTML = "1st";
+  }
+  
   let playoffInfo = document.getElementById("playoffSeriesInfo");
 
   if (game["playoffSeries"] != null) {

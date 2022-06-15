@@ -26,12 +26,12 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
       // Also open sound window
       let gameTime = gameObj["currentState"]["periodTimeRemaining"];
       // If game is over, don't start tracking
-      if (gameTime.valueOf() == "Final") {
+      if (gameTime != undefined && gameTime.valueOf() == "Final") {
         stopTrackingGame(gameObj);
         chrome.runtime.sendMessage({createGameSuccess: true});
       } else {
         // Open sound window in advance, playing the home team's goal horn
-        playSound(gameStatus["home"]["goalHorn"]);
+        playSound(gameObj["home"]["goalHorn"], 20000);
         let alarmInfo = {
           "periodInMinutes": 1,
         }
@@ -65,7 +65,7 @@ function onAlarm(alarm) {
     console.log("refreshing!");
     updateGameStatus().then((gameStatus) => {
       let gameTime = gameStatus["currentState"]["periodTimeRemaining"];
-      if (gameTime.valueOf() == "Final") {
+      if (gameTime != undefined && gameTime.valueOf() == "Final") {
         stopTrackingGame(gameStatus);
       }
     });
