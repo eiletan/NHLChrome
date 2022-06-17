@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
       let gameTime = gameObj["currentState"]["periodTimeRemaining"];
       // If game is over, don't start tracking
       if (gameTime != undefined && gameTime.valueOf() == "Final") {
-        stopTrackingGame(gameObj);
+        stopTrackingGameOnWin(gameObj);
         chrome.runtime.sendMessage({createGameSuccess: true});
       } else {
         // Open sound window in advance, playing the home team's goal horn
@@ -69,7 +69,7 @@ function onAlarm(alarm) {
     updateGameStatus().then((gameStatus) => {
       let gameTime = gameStatus["currentState"]["periodTimeRemaining"];
       if (gameTime != undefined && gameTime.valueOf() == "Final") {
-        stopTrackingGame(gameStatus);
+        stopTrackingGameOnWin(gameStatus);
       }
     });
   }
@@ -113,7 +113,7 @@ function createAlarmForDailySchedule() {
 }
 
 
-function stopTrackingGame(game) {
+function stopTrackingGameOnWin(game) {
   chrome.alarms.clear("liveGame");
   let win = determineWinner(game);
   let winTitle =  win["winnerShort"] + " wins! " + "(" + win["awayShort"] +  ": " + win["awayGoals"] + " | " + win["homeShort"] +  ": " + win["homeGoals"] + ")";
@@ -125,5 +125,4 @@ function stopTrackingGame(game) {
       }
     });
   });
-
 }

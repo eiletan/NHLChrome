@@ -194,7 +194,7 @@
     },
     {
         "name": "NHL",
-        "color": "#A9A9A9",
+        "color": "#DCDCDC",
         "logo": "data/icons/NHL.png",
         "goalHorn": "data/audio/Vancouver Canucks.mp3"
     }

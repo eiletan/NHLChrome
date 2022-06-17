@@ -65,12 +65,12 @@
 }
 
 .teamOneScoreboardAbbr {
-    background-color: blue;
+    background-color: Gainsboro;
 }
 
 
 .teamTwoScoreboardAbbr {
-    background-color: yellow;
+    background-color: Gainsboro;
 }
 
 
@@ -91,7 +91,7 @@
 
 
 .teamOneScoreboardLogo {
-    background-color: blue;
+    background-color: white;
     border-right: var(--borderRadius) solid;
     border: var(--borderRadius) solid;
     min-width: var(--scoreboardRowHeight);
@@ -105,7 +105,7 @@
 
 
 .teamTwoScoreboardLogo {
-    background-color: yellow;
+    background-color: white;
     border: var(--borderRadius) solid;
     border-left: none;
     border-top-right-radius: 13px;

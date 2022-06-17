@@ -23,6 +23,8 @@
             obj["color"] = team["color"];
             obj["goalHorn"] = team["goalHorn"];
             internalTeamsJson[obj["name"]] = obj;
+          } else if (team["name"].valueOf() == "NHL") {
+            chrome.storage.local.set({"NHLObj": team});
           }
         }
         let keys = Object.keys(internalTeamsJson);

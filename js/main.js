@@ -1,7 +1,6 @@
 // Display game if one is currently being "watched"
 window.onload = function () {
-  displayGame();
-  displayGamesToday();
+  displayUI();
 }
 
 
@@ -103,16 +102,19 @@ document.getElementById("buttonClear").addEventListener("click", function () {
     });
 
 })
+});
 
-  
+
+document.getElementById("buttonStopTracking").addEventListener("click", function() {
+  let self = document.getElementById("buttonStopTracking");
+  stopTrackingGameFromUI();
+  self.setAttribute("hidden", "hidden");
 });
 
 function displayGame() {
   chrome.storage.local.get(["currentGame"], function (result) {
     let curGame = result.currentGame;
-    if (curGame != null && curGame != undefined) {
-      setScoreboard(curGame);
-    }
+    displayGameHelper(curGame);
   });
 }
 
@@ -294,5 +296,66 @@ function setScoreboard(game) {
     playoffInfo.style.display = "none";    
   }
 
+
+}
+
+function displayGameHelper(curGame) {
+  if (curGame != null && curGame != undefined) {
+    setScoreboard(curGame);
+    let buttonStop = document.getElementById("buttonStopTracking");
+    buttonStop.removeAttribute("hidden");
+  } else {
+    chrome.storage.local.get(["NHLObj"], function (results) {
+      let nhlObj = results.NHLObj;
+      let fakeGame = {};
+      fakeGame["away"] = {};
+      fakeGame["home"] = {};
+      fakeGame["currentState"] = {};
+      fakeGame["currentState"]["away"] = {};
+      fakeGame["currentState"]["home"] = {};
+      fakeGame["away"]["abbreviation"] = nhlObj["name"];
+      fakeGame["home"]["abbreviation"] = nhlObj["name"];
+      fakeGame["away"]["color"] = nhlObj["color"];
+      fakeGame["home"]["color"] = nhlObj["color"];
+      fakeGame["currentState"]["away"]["goals"] = 0;
+      fakeGame["currentState"]["home"]["goals"] = 0;
+      fakeGame["currentState"]["away"]["shots"] = 0;
+      fakeGame["currentState"]["home"]["shots"] = 0;
+      fakeGame["away"]["logo"] = nhlObj["logo"];
+      fakeGame["home"]["logo"] = nhlObj["logo"];
+      setScoreboard(fakeGame);
+    });
+  }
+}
+
+
+
+function displayUI() {
+  chrome.storage.local.get(["currentGame"], function (result) {
+    let curGame = result.currentGame;
+    displayGameHelper(curGame);
+    let gameTableDiv = document.getElementById("gamesTableDiv");
+    if (curGame != undefined || curGame != null) {
+      gameTableDiv.style.display = "none";
+    } else {
+      gameTableDiv.style.display = "block";
+      displayGamesToday();
+    }
+  });
+
+}
+
+function stopTrackingGameFromUI() {
+  chrome.alarms.clear("liveGame");
+  chrome.storage.local.set({"currentGame": null}, function() {
+    displayUI();
+  });
+  try {
+    chrome.storage.local.get(["soundWindowId"], function(results) {
+      chrome.windows.remove(results.soundWindowId);
+    });
+  } catch(err) {
+    console.log(err);
+  }
 
 }
