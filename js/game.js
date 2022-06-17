@@ -142,10 +142,10 @@ function createGame(gameid) {
                   return;
               });
             }
-          }).catch((err) => {
-              reject("Game could not be created due to: " + err);
-              return;
           });
+        }).catch((err) => {
+            reject("Game could not be created due to: " + err);
+            return;
         });
          
     });

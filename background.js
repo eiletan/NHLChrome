@@ -31,7 +31,10 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
         chrome.runtime.sendMessage({createGameSuccess: true});
       } else {
         // Open sound window in advance, playing the home team's goal horn
-        playSound(gameObj["home"]["goalHorn"], 20000);
+        let title = "Opening Sound Popup Window";
+        let msg = "Please keep this window open for the best experience."
+        + " It will be closed automatically when the game is over or when you stop tracking this game.";
+        sendNotification(title,msg,gameObj["home"]["logo"],gameObj["home"]["goalHorn"]);
         let alarmInfo = {
           "periodInMinutes": 1,
         }

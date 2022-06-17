@@ -14,7 +14,7 @@
 <body>
     <h1><i>NHLChrome</i></h1>
     <div id="gameScoreDiv">
-        <h3 id="playoffSeriesInfo" style="display: none"></h3>
+        <span id="playoffSeriesInfo" style="display: none"></span>
         <table class="gameScoreBoardTable">
             <tr class="gameScoreBoardStatusInfoRow">
                 <td class="gameScoreBoardStatusInfo teamShotsOnGoal teamOneScoreboardShotsOnGoal">SHOTS: 69</td>
@@ -39,6 +39,7 @@
         </table>
     </div>
     <div id="gamesTableDiv" style="max-height:150px;overflow:auto; display: inline-block">
+        Scheduled Games For Today
         <table class="gamePreviewsTable">
             <tr class="gamePreviews">
                 <td class="gamePreviewsInfo gamePreviewsLogo gamePreviewsTeamOneLogo">
@@ -56,6 +57,7 @@
     <button id="button">Get Teams</button>
     <button id="buttonAlarm">Alarm</button>
     <button id="buttonClear">Clear Alarm</button>
+    <button id="buttonStopTracking" hidden>Stop Tracking Game</button>
     <script src="js/game.js"></script>
     <script src="js/main.js"></script>
     
