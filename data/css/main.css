@@ -22,3 +22,7 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  body {
+    width: 505px;
+  }

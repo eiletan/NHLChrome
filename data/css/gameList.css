@@ -8,7 +8,9 @@
 #gamesTableDiv {
     font-family: 'Pragati Narrow', sans-serif;
     font-size: 20px;
-    scrollbar-width: thin;
+    width: 293px;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .gamePreviewsTable {
