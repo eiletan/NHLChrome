@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NHLChrome</title>
+    <link rel="stylesheet" href="data/css/main.css">
+    <link rel="stylesheet" href="data/css/scoreboard.css">
+    <link rel="stylesheet" href="data/css/gameList.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pragati+Narrow&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <h1><i>NHLChrome</i></h1>
+    <div id="gameScoreDiv">
+        <span id="playoffSeriesInfo" style="display: none"></span>
+        <table class="gameScoreBoardTable">
+            <tr class="gameScoreBoardStatusInfoRow">
+                <td class="gameScoreBoardStatusInfo teamShotsOnGoal teamOneScoreboardShotsOnGoal">SOG: 0</td>
+                <td class="gameScoreBoardStatusInfo teamStrengthStatus teamOneScoreboardStrength"></td>
+                <td class="gameScoreBoardStatusInfo gameTime">20:00</td>
+                <td class="gameScoreBoardStatusInfo gamePeriod">1st</td>
+                <td class="gameScoreBoardStatusInfo teamStrengthStatus teamTwoScoreboardStrength"></td>
+                <td class="gameScoreBoardStatusInfo teamShotsOnGoal teamTwoScoreboardShotsOnGoal">SOG: 0</td>
+            </tr>
+            <tr class="gameScoreBoard">
+                <td class="gameScoreBoardInfo teamScoreboardLogo teamOneScoreboardLogo">
+                    <img class="scoreboardLogoImg teamOneScoreboardLogoImg" src="data/icons/NHL.png" width=75 height=75>
+                </td>
+                <td class="gameScoreBoardInfo teamScoreboardAbbr teamOneScoreboardAbbr">NHL</td>
+                <td class="gameScoreBoardInfo teamScoreboardScore teamOneScoreboardScore">0</td>
+                <td class="gameScoreBoardInfo teamScoreboardScore teamTwoScoreboardScore">0</td>
+                <td class="gameScoreBoardInfo teamScoreboardAbbr teamTwoScoreboardAbbr">NHL</td>
+                <td class="gameScoreBoardInfo teamScoreboardLogo teamTwoScoreboardLogo">
+                    <img class="scoreboardLogoImg teamTwoScoreboardLogoImg" src="data/icons/NHL.png" width=75 height=75>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="gamesTableDiv" style="max-height:150px;overflow:auto;">
+        Scheduled Games For Today
+        <table class="gamePreviewsTable">
+            <tr class="gamePreviews">
+                <td class="gamePreviewsInfo gamePreviewsLogo gamePreviewsTeamOneLogo">
+                    <img class="gamePreviewsLogoImg gamePreviewsTeamOneLogoImg" src="data/icons/Vancouver Canucks.png" width=30 height=30>
+                </td>
+                <td class="gamePreviewsInfo gamePreviewsAbbr gamePreviewsTeamOneAbbr">VAN</td>
+                <td class="gamePreviewsInfo gamePreviewsAt">@</td>
+                <td class="gamePreviewsInfo gamePreviewsAbbr gamePreviewsTeamTwoAbbr">BOS</td>
+                <td class="gamePreviewsInfo gamePreviewsLogo gamePreviewsTeamTwoLogo">
+                    <img class="gamePreviewsLogoImg gamePreviewsTeamTwoLogoImg" src="data/icons/Boston Bruins.png" width=30 height=30>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <button id="buttonStopTracking" hidden>Stop Tracking Game</button>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+    
+   
+</body>
+
+</html>

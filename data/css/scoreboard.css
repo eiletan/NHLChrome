@@ -1,0 +1,125 @@
+@import "/data/css/main.css";
+
+:root {
+    --scoreboardRowHeight: 75px;
+    --borderRadius: 3px
+}
+.teamInfo, .gameScoreBoardTable, #playoffSeriesInfo{
+    font-family: 'Pragati Narrow', sans-serif;
+    font-size: 20px;
+}
+
+.teamGameStatus, .goalInfo {
+    font-style: italic;
+    font-weight: bold;
+    color: aliceblue;
+    text-shadow: navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px, navy 0px 0px 1px;
+}
+
+.gameScoreBoardTable {
+    border: none;
+    font-size: 40px;
+    border-spacing: 0px;
+}
+
+.gameScoreBoardStatusInfoRow {
+    font-size: 15px;
+    text-align: center;
+}
+
+.gameScoreBoardStatusInfo {
+    border-top: var(--borderRadius) solid;
+    border-right: var(--borderRadius) solid;
+    border-bottom: var(--borderRadius) solid;
+}
+
+.teamOneScoreboardShotsOnGoal {
+    border-top-left-radius: 13px;
+    border-left: var(--borderRadius) solid;
+    border-bottom-left-radius: 13px;
+}
+
+.teamTwoScoreboardShotsOnGoal {
+    border-top-right-radius: 13px;
+    border-right: var(--borderRadius) solid;
+    border-bottom-right-radius: 13px;
+}
+
+.gameScore {
+    display: inline-block;
+    /* border: solid; */
+    vertical-align: middle;
+    border-radius: 15px;
+    /* color: */
+}
+
+
+.teamScoreboardAbbr, .teamScoreboardScore {
+    border-right: var(--borderRadius) solid;
+    border-top: var(--borderRadius) solid;
+    border-bottom: var(--borderRadius) solid;
+    vertical-align: middle;
+    text-align: center;
+    background-color: Gainsboro;
+    /* text-shadow: white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px, white 0px 0px 1px; */
+}
+
+.teamOneScoreboardAbbr {
+    background-color: Gainsboro;
+}
+
+
+.teamTwoScoreboardAbbr {
+    background-color: Gainsboro;
+}
+
+
+.teamScoreboardAbbr {
+    color: white;
+    min-width: 80px;
+    border-color: black;
+    text-shadow: var(--textShadowForAbbr);
+}
+
+.teamScoreboardScore {
+    min-width: var(--scoreboardRowHeight);
+}
+
+.teamScoreboardLogo {
+    background-color: Gainsboro;
+}
+
+
+.teamOneScoreboardLogo {
+    background-color: white;
+    border-right: var(--borderRadius) solid;
+    border: var(--borderRadius) solid;
+    min-width: var(--scoreboardRowHeight);
+    min-height: var(--scoreboardRowHeight);
+    border-top-left-radius: 13px;
+    border-bottom-left-radius: 13px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+}
+
+
+.teamTwoScoreboardLogo {
+    background-color: white;
+    border: var(--borderRadius) solid;
+    border-left: none;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden
+}
+
+
+
+.scoreboardLogoImg {
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

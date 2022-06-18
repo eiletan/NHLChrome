@@ -68,8 +68,8 @@
     {
         "name": "Edmonton Oilers",
         "color": "#041E42",
-        "logo": "data/icons/Edmonton Oliers.png",
-        "goalHorn": "data/audio/Edmonton Oliers.mp3"
+        "logo": "data/icons/Edmonton Oilers.png",
+        "goalHorn": "data/audio/Edmonton Oilers.mp3"
     },
     {
         "name": "Florida Panthers",
@@ -90,7 +90,7 @@
         "goalHorn": "data/audio/Minnesota Wild.mp3"
     },
     {
-        "name": "Montreal Canadiens",
+        "name": "Montréal Canadiens",
         "color": "#AF1E2D",
         "logo": "data/icons/Montreal Canadiens.png",
         "goalHorn": "data/audio/Montreal Canadiens.mp3"
@@ -194,7 +194,7 @@
     },
     {
         "name": "NHL",
-        "color": "#A9A9A9",
+        "color": "#DCDCDC",
         "logo": "data/icons/NHL.png",
         "goalHorn": "data/audio/Vancouver Canucks.mp3"
     }

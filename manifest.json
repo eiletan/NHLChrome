@@ -3,10 +3,25 @@
     "description": "Single Game Tracker",
     "version": "1.0",
     "manifest_version": 3,
-    "browser_action": {
-        "default_popup": "popup.html",
-        "default_icon":{
-          "128": "bbt128.png"
+    "web_accessible_resources": [
+        {
+            "resources": ["/data/audio/*","/data/icons/*","/data/teams/*"],
+            "matches": ["<all_urls>"]
         }
-      }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "host_permissions": [
+        "https://statsapi.web.nhl.com/"
+    ],
+    "permissions": [
+        "storage",
+        "alarms",
+        "notifications",
+        "tabs"
+    ]
   }
