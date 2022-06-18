@@ -43,68 +43,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 
 
-document.getElementById("button").addEventListener("click", function () {
-  let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
-  console.log(date);
-  chrome.alarms.getAll(function(alarms){
-    console.log(alarms);
-  })
-});
-
-
-document.getElementById("buttonAlarm").addEventListener("click", function () {
-  chrome.runtime.sendMessage({gameId: "2021030324"});
-  var alarmInfo = {
-    "periodInMinutes": 1,
-  }
-  chrome.alarms.create("liveGame", alarmInfo);
-  chrome.alarms.get("liveGame", function (alarm) {
-    console.log("alarm found");
-    console.log(alarm);
-  })
-  chrome.alarms.getAll(function(as) {
-    console.log(as);
-  })
-});
-
-document.getElementById("buttonClear").addEventListener("click", function () {
-  chrome.alarms.clear("liveGame");
-  // chrome.alarms.clearAll();
-  chrome.storage.local.get(["teams"], function(result) {
-    let teams = result.teams;
-    chrome.notifications.create({
-      title: "VAN GOAL",
-      message: "GOAL SCORED BY #40, ASSISTED BY #9 and #43",
-      type: "basic",
-      iconUrl:  teams["Vancouver Canucks"]["logo"],
-      silent: true
-    });
-    chrome.storage.local.get(["MAXHEIGHT", "MAXWIDTH"], function (heightResult) {
-      let url = chrome.runtime.getURL("audio.html");
-      url += "?volume=0.6&src=" + teams["Vancouver Canucks"]["goalHorn"] + "&length=" + notifLength;
-  
-      // Create window to play sound if one does not exist already
-      chrome.storage.local.get(["soundTabId"], function (result) {
-        let soundTabId = result.soundTabId;
-        console.log(soundTabId);
-        if (soundTabId == undefined) {
-          createWindowForSound(url,heightResult);
-        } else {
-          chrome.tabs.get(soundTabId, function () {
-            if (chrome.runtime.lastError) {
-              createWindowForSound(url,heightResult);
-            } else {
-              chrome.tabs.update(soundTabId, { url: url });
-            }
-          });
-        }
-      });
-    });
-
-})
-});
-
-
 document.getElementById("buttonStopTracking").addEventListener("click", function() {
   let self = document.getElementById("buttonStopTracking");
   stopTrackingGameFromUI();
@@ -208,6 +146,7 @@ function displayGamesToday() {
       while (gamesTable.firstChild) {
         console.log(gamesTable.firstChild);
         gamesTable.removeChild(gamesTable.firstChild);
+        document.getElementById("gamesTableDiv").innerHTML = "No Games Scheduled For Today";
       }
     }
   });
