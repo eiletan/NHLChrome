@@ -132,6 +132,14 @@ function displayGamesToday() {
           previewRow.className = "gamePreviews";
           previewRow.dataset.gameId = game["gamePk"];
           previewRow.append(teamOneLogo,teamOneAbbr,at,teamTwoAbbr,teamTwoLogo,time);
+
+          let rowCells = document.getElementsByClassName("gamePreviewsInfo");
+          let defaultColor = "gainsboro";
+          for (cell of rowCells) {
+            cell.style.backgroundColor = defaultColor;
+          }
+
+
           console.log(previewRow);
           gamesTable.append(previewRow);
           
@@ -140,6 +148,21 @@ function displayGamesToday() {
             chrome.runtime.sendMessage({gameId: previewRow.dataset.gameId});
           });
 
+
+          previewRow.addEventListener('mouseover', function() {
+            for (cell of rowCells) {
+              cell.style.backgroundColor = internalTeams[home]["color"];
+            }
+            
+          });
+
+          previewRow.addEventListener('mouseout', function() {
+            for (cell of rowCells) {
+              cell.style.backgroundColor = defaultColor;
+            }
+            
+          });
+          
         }
       })
     } else {

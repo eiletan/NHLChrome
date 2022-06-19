@@ -5,7 +5,7 @@
     --borderRadius: 3px
 }
 .teamInfo, .gameScoreBoardTable, #playoffSeriesInfo{
-    font-family: 'Pragati Narrow', sans-serif;
+    font-family: var(--universalFont);
     font-size: 20px;
 }
 

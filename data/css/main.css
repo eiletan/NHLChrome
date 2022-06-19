@@ -1,6 +1,7 @@
 :root {
     --textShadowForAbbr: black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px,
     black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px;
+    --universalFont: 'Pragati Narrow', sans-serif;
 }
 
 /* width */
@@ -25,4 +26,19 @@
 
   body {
     width: 505px;
+    text-align: center;
+  }
+
+  .nhlButton {
+    border-radius: 8px;
+    border: none;
+    margin: 10px;
+    font-family: var(--universalFont);
+    font-size: 20px;
+    background-color: skyblue;
+    cursor: pointer;
+  }
+  
+  .nhlButtonStop:hover {
+    background-color: tomato;
   }
