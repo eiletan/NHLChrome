@@ -1,3 +1,9 @@
+  /**
+   * Plays an audio file using a popup browser
+   * @param {String} uri Relative path of the audio file
+   * @param {String} length Desired length of audio playback
+   * @returns Promise that resolves when sound plays
+   */
   function playSound(uri, length) {
     let retprom = new Promise((resolve,reject) => {
         chrome.storage.local.get(["MAXHEIGHT", "MAXWIDTH"], function (heightResult) {
@@ -39,7 +45,12 @@
   
 
 
-  
+  /**
+   * Opens popup window to play audio file
+   * @param {*} url Full URL which opens audio.html and plays the sound file
+   * @param {*} dimensions Dimensions of the popup sound window
+   * @returns Promise which resolves when the popup window is opened
+   */
   function createWindowForSound(url,dimensions) {
     let retprom = new Promise((resolve,reject) => {
         chrome.windows.create({
@@ -62,7 +73,15 @@
     return retprom;
   }
 
-
+  /**
+   * Sends chrome desktop notification
+   * @param {String} title Title of the notification
+   * @param {String} message Notification message
+   * @param {String} iconUrl Relative path of image to be used in notification
+   * @param {String} audioUrl Relative path of audio file to be played with the notification
+   * @param {String} length Length of notification
+   * @returns Promise which resolves when the notification is sent
+   */
   function sendNotification(title,message,iconUrl,audioUrl,length=notifLength) {
     let retprom = new Promise((resolve,reject) => {
         let opt = {
