@@ -100,58 +100,71 @@ function matchTeamName(teamNameA, teamNameB) {
 
 /**
  * Creates an internal record of a NHL game and saves it to local storage.
- * @param {String} gameid API internal ID of a NHL Game 
+ * @param {String} gameid API internal ID of a NHL Game
  * @returns a Promise that resolves with an JSON object when the internal record of the game is created and saved to local storage
  */
-function createGame(gameid) {
-    let retprom = new Promise((resolve,reject) => {
+ function createGame(gameid) {
+    let retprom = new Promise((resolve, reject) => {
       GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((response) => {
-        chrome.storage.local.get(["teams"], function(result) {
-            let teams = result.teams;
-            let gameData = response["gameData"];
-            let homeTeam = gameData["teams"]["home"]["name"];
-            let awayTeam = gameData["teams"]["away"]["name"];
-            let gameObj = {};
-            gameObj["home"] = teams[homeTeam];
-            gameObj["away"] = teams[awayTeam];
-            gameObj["id"] = gameid;
-            gameObj["allGoals"] = [];
-            gameObj["currentState"] = extractGameState(response);
-            gameObj["playoffSeries"] = null;
-            if (gameData["game"]["type"] == "P") {
+          chrome.storage.local.get(["teams"], function (result) {
+            extractAllGoalsScored(response).then((goals) => {
+              let teams = result.teams;
+              let gameData = response["gameData"];
+              let homeTeam = gameData["teams"]["home"]["name"];
+              let awayTeam = gameData["teams"]["away"]["name"];
+              let gameObj = {};
+              gameObj["home"] = teams[homeTeam];
+              gameObj["away"] = teams[awayTeam];
+              gameObj["id"] = gameid;
+              gameObj["allGoals"] = goals;
+              gameObj["currentState"] = extractGameState(response);
+              gameObj["playoffSeries"] = null;
+              if (gameData["game"]["type"] == "P") {
                 GetFromNHLApi("/tournaments/playoffs?expand=round.series,schedule.game.seriesSummary").then((response) => {
-                     let pogame = findPlayoffGame(response,homeTeam,awayTeam);
-                     gameObj["playoffSeries"] = pogame;
-                     if (pogame != null) {
-                          chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
-                              console.log("Game have been saved to local storage: " + gameObj);
-                              console.log(gameObj);
-                              resolve(gameObj);
-                              return;
-                          });
-                     } else {
-                         reject("Playoff data could not be found for the game. Please try again");
-                     }
+                  let pogame = findPlayoffGame(response, homeTeam, awayTeam);
+                  gameObj["playoffSeries"] = pogame;
+                  if (pogame != null) {
+                    chrome.storage.local.set({ currentGame: gameObj, currentGameId: gameid },function () {
+                        console.log("Game have been saved to local storage: " + gameObj);
+                        console.log(gameObj);
+                        resolve(gameObj);
+                        return;
+                      }
+                    );
+                  } else {
+                    reject(
+                      "Playoff data could not be found for the game. Please try again"
+                    );
+                  }
                 });
-            } else {
+              } else {
                 // Save to local storage
-              chrome.storage.local.set({ "currentGame": gameObj, "currentGameId": gameid}, function () {
-                  console.log("Game have been saved to local storage: " + gameObj);
-                  console.log(gameObj);
-                  resolve(gameObj);
-                  return;
-              });
-            }
+                chrome.storage.local.set({ currentGame: gameObj, currentGameId: gameid }, function () {
+                    console.log("Game have been saved to local storage: " + gameObj);
+                    console.log(gameObj);
+                    resolve(gameObj);
+                    return;
+                  }
+                );
+              }
+            });
           });
-        }).catch((err) => {
-            reject("Game could not be created due to: " + err);
-            return;
+        })
+        .catch((err) => {
+          reject("Game could not be created due to: " + err);
+          return;
         });
-         
     });
     return retprom;
   }
 
+  /**
+   * Function which finds playoff information about the given game
+   * @param {Object} response API response from the live game endpoint
+   * @param {String} teamA Team name of one of the teams
+   * @param {String} teamB Team name of the other team
+   * @returns JSON object containing the playoff round, game number, and game series status
+   */
   function findPlayoffGame(response, teamA, teamB) {
       let rounds = response["rounds"].length;
       for (let i = rounds-1; i >= 0; i--) {
@@ -197,48 +210,27 @@ function createGame(gameid) {
       return null;
   }
 
-  /**
-   * Gets a live update for the game specified by gameid and returns all goals scored in the game at the present moment as an array
-   * @param {String} gameid API internal ID of a NHL Game
-   * @returns a Promise that resolves with an array that contains all goals scored currently from last to first.
-   */
-  function getAllGoalsScored(gameid) {
-      let retprom = new Promise((resolve,reject) => {
-          GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
-              gameData = game["liveData"]["plays"]["allPlays"];
-              goals = [];
-              firstGoalFound = false;
-              let gameson;
-                  chrome.storage.local.get(["currentGame"], function(result) {  
-                    gameson = result.currentGame;
-                    for(let i = gameData.length - 1; i >= 0; i--) {
-                        let gameEvent = gameData[i];
-                        let gameEventType = gameEvent["result"]["eventTypeId"];
-                        if (gameEventType.valueOf() === "GOAL") {
-                            if (firstGoalFound == false && gameson["allGoals"].length > 0) {
-                                if (gameson["allGoals"][0]["about"]["eventId"] == gameEvent["about"]["eventId"]) {
-                                    resolve(gameson["allGoals"]);
-                                    return;
-                                } else {
-                                    firstGoalFound = true;
-                                    goals.push(gameEvent);
-
-                                }
-                            } else {
-                                goals.push(gameEvent);
-                            }
-                        }
-                    }
-                    resolve(goals);
-                    return;
-                  });
-          }).catch((err) => {
-              reject("Error retrieving game data: " + err);
-              return;
+/**
+ * Gets a live update for the game specified by gameid and returns all goals scored in the game at the present moment as an array
+ * @param {String} gameid API internal ID of a NHL Game
+ * @returns a Promise that resolves with an array that contains all goals scored currently from last to first.
+ */
+ function getAllGoalsScored(gameid) {
+    let retprom = new Promise((resolve, reject) => {
+      GetFromNHLApi("/game/" + gameid + "/feed/live/diffPatch?startTimecode=").then((game) => {
+          extractAllGoalsScored(game).then((goals) => {
+            resolve(goals);
+            return;
           });
-      })
-      return retprom;
+        })
+        .catch((err) => {
+          reject("Error retrieving game data: " + err);
+          return;
+        });
+    });
+    return retprom;
   }
+  
   
   /**
    * Gets a live update for the game specified by gameid and returns the state of the game as an JSON object
@@ -259,7 +251,11 @@ function createGame(gameid) {
       return retprom;
   }
 
-
+  /**
+   * Gets information about game state
+   * @param {Object} game API response from the live game endpoint
+   * @returns JSON object containing information about game state
+   */
   function extractGameState(game) {
     let current = game["liveData"]["linescore"];
     let homeTeamAPI = current["teams"]["home"];
@@ -295,6 +291,56 @@ function createGame(gameid) {
     gameState["away"] = awayTeam;
     return gameState;
   }
+
+/**
+ * Get all goals scored in the game so far
+ * @param {Object} game API response from the live game endpoint
+ * @returns Array of all goals scored
+ */
+function extractAllGoalsScored(game) {
+    let retprom = new Promise((resolve, reject) => {
+      gameData = game["liveData"]["plays"]["allPlays"];
+      let goals = [];
+      let gameson;
+      chrome.storage.local.get(["currentGame"], function (result) {
+        gameson = result.currentGame;
+        if (gameson != undefined && gameson != null && gameson["allGoals"] != undefined && gameson["allGoals"] != null) {
+          // If current game is defined, then we know not to check every single goal in the API response
+          for (let i = gameData.length - 1; i >= 0; i--) {
+            let gameEvent = gameData[i];
+            let gameEventType = gameEvent["result"]["eventTypeId"];
+            if (gameEventType.valueOf() === "GOAL") {
+              if (gameson["allGoals"].length > 0) {
+                if (gameson["allGoals"][0]["about"]["eventId"] == gameEvent["about"]["eventId"]) {
+                  // If the first goal found matches the first goal of the internal game state, then merge goals and locally stored goals and return
+                  let retGoals = goals.concat(gameson["allGoals"]);
+                  resolve(retGoals);
+                  return;
+                } else {
+                  goals.push(gameEvent);
+                }
+              } else {
+                goals.push(gameEvent);
+              }
+            }
+          }
+        } else {
+          // If game has no goals, push all goal events into the array
+          for (let i = gameData.length - 1; i >= 0; i--) {
+            let gameEvent = gameData[i];
+            let gameEventType = gameEvent["result"]["eventTypeId"];
+            if (gameEventType.valueOf() === "GOAL") {
+              goals.push(gameEvent);
+            }
+          }
+        }
+        resolve(goals);
+        return;
+      });
+    });
+    return retprom;
+  }
+  
 
   /**
    * Updates the game state locally, and sends notification if a team has scored
@@ -355,8 +401,11 @@ function createGame(gameid) {
     return retprom;
   }
 
-
-  // Returns JSON object with type of win (Regulation or OT), winner, and final score
+  /**
+   * Determines the winner of the game
+   * @param {Object} game API response from the live game endpoint
+   * @returns JSON object containing information about the game win; type of win, winning team, and final score
+   */
   function determineWinner(game) {
     let state = game["currentState"];
     let winnerJSON = {};
