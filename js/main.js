@@ -49,6 +49,9 @@ document.getElementById("buttonStopTracking").addEventListener("click", function
   self.setAttribute("hidden", "hidden");
 });
 
+/**
+ * Display current game information on the UI
+ */
 function displayGame() {
   chrome.storage.local.get(["currentGame"], function (result) {
     let curGame = result.currentGame;
@@ -56,6 +59,9 @@ function displayGame() {
   });
 }
 
+/**
+ * Display scheduled games on the UI
+ */
 function displayGamesToday() {
   chrome.storage.local.get(["gamesForToday"], function (result) {
     let games = result.gamesForToday;
@@ -175,6 +181,10 @@ function displayGamesToday() {
   });
 }
 
+/**
+ * Helper function for DisplayGame(), actually sets the game to the custom scoreboard
+ * @param {*} game JSON representation of the game 
+ */
 function setScoreboard(game) {
   let team1Abr = document.getElementsByClassName("gameScoreBoardInfo teamScoreboardAbbr teamOneScoreboardAbbr")[0];
   let team2Abr = document.getElementsByClassName("gameScoreBoardInfo teamScoreboardAbbr teamTwoScoreboardAbbr")[0];
@@ -261,6 +271,10 @@ function setScoreboard(game) {
 
 }
 
+/**
+ * Helper function for displayGame()
+ * @param {*} curGame JSON representation of the game
+ */
 function displayGameHelper(curGame) {
   if (curGame != null && curGame != undefined) {
     setScoreboard(curGame);
@@ -291,7 +305,9 @@ function displayGameHelper(curGame) {
 }
 
 
-
+/**
+ * Initialize UI display
+ */
 function displayUI() {
   chrome.storage.local.get(["currentGame"], function (result) {
     let curGame = result.currentGame;
@@ -307,6 +323,9 @@ function displayUI() {
 
 }
 
+/**
+ * Stops the tracking of the current game and makes list of scheduled games visible again
+ */
 function stopTrackingGameFromUI() {
   chrome.alarms.clear("liveGame");
   chrome.storage.local.set({"currentGame": null}, function() {
