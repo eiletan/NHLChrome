@@ -224,26 +224,26 @@ function setScoreboard(game) {
   if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true) {
     team1Strength.innerHTML = "<b>PP</b>";
   }
-  else if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
+  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
     team1Strength.innerHTML = "<b>PP <br> EN</b>";
   }
-  else if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
+  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
     team1Strength.innerHTML = "<b>EN</b>";
   }
-  else {
+  if (gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == false) {
     team1Strength.innerHTML = "";
   }
 
   if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true) {
     team2Strength.innerHTML = "<b>PP</b>";
   }
-  else if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
+  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
     team2Strength.innerHTML = "<b>PP <br> EN</b>";
   }
-  else if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
+  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
     team2Strength.innerHTML = "<b>EN</b>";
   }
-  else {
+  if (gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == false){
     team2Strength.innerHTML = "";
   }
 
