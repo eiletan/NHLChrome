@@ -1,6 +1,7 @@
 :root {
     --textShadowForAbbr: black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px,
     black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px, black 0px 0px 1px;
+    --universalFont: 'Pragati Narrow', sans-serif;
 }
 
 /* width */
@@ -25,4 +26,35 @@
 
   body {
     width: 505px;
+    background-size: 400% 400%;
+    text-align: center;
+    background-image: linear-gradient(20deg,aliceblue,lightgreen, violet,tomato);
+    animation: gradientAnimation 15s ease infinite;
   }
+
+  .nhlButton {
+    border-radius: 8px;
+    border: none;
+    margin: 10px;
+    font-family: var(--universalFont);
+    font-size: 20px;
+    background-color: skyblue;
+    cursor: pointer;
+  }
+  
+  .nhlButtonStop:hover {
+    background-color: tomato;
+  }
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
