@@ -26,7 +26,10 @@
 
   body {
     width: 505px;
+    background-size: 400% 400%;
     text-align: center;
+    background-image: linear-gradient(20deg,aliceblue,lightgreen, violet,tomato);
+    animation: gradientAnimation 15s ease infinite;
   }
 
   .nhlButton {

@@ -25,6 +25,8 @@
 .gameScoreBoardStatusInfoRow {
     font-size: 15px;
     text-align: center;
+    font-weight: bold;
+    background-color: gainsboro;
 }
 
 .gameScoreBoardStatusInfo {

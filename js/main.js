@@ -207,9 +207,7 @@ function setScoreboard(game) {
   team2Score.innerHTML = game["currentState"]["home"]["goals"];
   
   team1Logo.src = game["away"]["logo"];
-  team1Logo.style.backgroundColor = "white";
   team2Logo.src = game["home"]["logo"];
-  team2Logo.style.backgroundColor = "white";
 
   let gameState = game["currentState"];
 
