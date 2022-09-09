@@ -66,7 +66,7 @@ function displayGamesToday() {
   chrome.storage.local.get(["gamesForToday"], function (result) {
     let games = result.gamesForToday;
     let gamesTable = document.getElementsByClassName("gamePreviewsTable")[0];
-    if (games.length != 0) {
+    if (games && games.length != 0) {
       chrome.storage.local.get(["teams"], function (teamresults) {
         let internalTeams = teamresults.teams;
         let wipeIndex = 0;
@@ -211,51 +211,58 @@ function setScoreboard(game) {
 
   let gameState = game["currentState"];
 
-  team1SOG.innerHTML = "SOG: " + gameState["away"]["shots"];
-  team2SOG.innerHTML = "SOG: " + gameState["home"]["shots"];
-
-  if (gameState["period"] != undefined && gameState["period"].valueOf() == "SO") {
-    team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutGoalsScored"] + "/" + gameState["away"]["shootoutAttempts"];
-    team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutGoalsScored"] + "/" + gameState["home"]["shootoutAttempts"];
-  }
-  
-  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true) {
-    team1Strength.innerHTML = "<b>PP</b>";
-  }
-  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
-    team1Strength.innerHTML = "<b>PP <br> EN</b>";
-  }
-  if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
-    team1Strength.innerHTML = "<b>EN</b>";
-  }
-  if (gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == false) {
-    team1Strength.innerHTML = "";
-  }
-
-  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true) {
-    team2Strength.innerHTML = "<b>PP</b>";
-  }
-  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
-    team2Strength.innerHTML = "<b>PP <br> EN</b>";
-  }
-  if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
-    team2Strength.innerHTML = "<b>EN</b>";
-  }
-  if (gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == false){
-    team2Strength.innerHTML = "";
-  }
-
-  if (gameState["periodTimeRemaining"] != undefined) {
-    gameTime.innerHTML = gameState["periodTimeRemaining"];
+  if (!gameState) {
+    team1SOG.innerHTML = "SOG: 0";
+    team2SOG.innerHTML = "SOG: 0";
   } else {
-    gameTime.innerHTML = "20:00";
-  }
+    team1SOG.innerHTML = "SOG: " + (gameState?.["away"]?.["shots"] ? gameState?.["away"]?.["shots"] : 0);
+    team2SOG.innerHTML = "SOG: " + (gameState?.["home"]?.["shots"] ? gameState?.["home"]?.["shots"] : 0);
+
+    if (gameState["period"] != undefined && gameState["period"].valueOf() == "SO") {
+      team1SOG.innerHTML = "SO: " + gameState["away"]["shootoutGoalsScored"] + "/" + gameState["away"]["shootoutAttempts"];
+      team2SOG.innerHTML = "SO: " + gameState["home"]["shootoutGoalsScored"] + "/" + gameState["home"]["shootoutAttempts"];
+    }
   
-  if (gameState["period"] != undefined) {
-    gamePeriod.innerHTML = gameState["period"];
-  } else {
-    gamePeriod.innerHTML = "1st";
+    if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true) {
+      team1Strength.innerHTML = "<b>PP</b>";
+    }
+    if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == true && gameState["away"]["goaliePulled"] == true) {
+      team1Strength.innerHTML = "<b>PP <br> EN</b>";
+    }
+    if (gameState["away"]["powerplay"] != undefined && gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == true) {
+      team1Strength.innerHTML = "<b>EN</b>";
+    }
+    if (gameState["away"]["powerplay"] == false && gameState["away"]["goaliePulled"] == false) {
+      team1Strength.innerHTML = "";
+    }
+
+    if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true) {
+      team2Strength.innerHTML = "<b>PP</b>";
+    }
+    if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == true && gameState["home"]["goaliePulled"] == true) {
+      team2Strength.innerHTML = "<b>PP <br> EN</b>";
+    }
+    if (gameState["home"]["powerplay"] != undefined && gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == true) {
+      team2Strength.innerHTML = "<b>EN</b>";
+    }
+    if (gameState["home"]["powerplay"] == false && gameState["home"]["goaliePulled"] == false){
+      team2Strength.innerHTML = "";
+    }
+
+    if (gameState["periodTimeRemaining"] != undefined || gameState["periodTimeRemaining"] != null) {
+      gameTime.innerHTML = gameState["periodTimeRemaining"];
+    } else {
+      gameTime.innerHTML = "20:00";
+    }
+  
+    if (gameState["period"] != undefined || gameState["period"] != null) {
+      gamePeriod.innerHTML = gameState["period"];
+    } else {
+      gamePeriod.innerHTML = "1st";
+    }
+
   }
+
   
   let playoffInfo = document.getElementById("playoffSeriesInfo");
 
