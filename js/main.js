@@ -146,7 +146,6 @@ function displayGamesToday() {
           }
 
 
-          console.log(previewRow);
           gamesTable.append(previewRow);
           
           // Create event listener for each row which will start the tracking of a game by sending message to service worker
@@ -156,14 +155,16 @@ function displayGamesToday() {
 
 
           previewRow.addEventListener('mouseover', function() {
-            for (cell of rowCells) {
+            let cells = previewRow.getElementsByTagName("td");
+            for (cell of cells) {
               cell.style.backgroundColor = internalTeams[home]["color"];
             }
             
           });
 
           previewRow.addEventListener('mouseout', function() {
-            for (cell of rowCells) {
+            let cells = previewRow.getElementsByTagName("td");
+            for (cell of cells) {
               cell.style.backgroundColor = defaultColor;
             }
             
@@ -173,7 +174,6 @@ function displayGamesToday() {
       })
     } else {
       while (gamesTable.firstChild) {
-        console.log(gamesTable.firstChild);
         gamesTable.removeChild(gamesTable.firstChild);
         document.getElementById("gamesTableDiv").innerHTML = "No Games Scheduled For Today";
       }
