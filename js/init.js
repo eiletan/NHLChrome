@@ -55,3 +55,18 @@
         throw "Team initialization failed. Please try again";
       });
   }
+
+
+  /**
+   * Fetches list of games for the given date and stores it in chrome local storage
+   * @param {String} date 
+   */
+  function initScheduledGames(date) {
+    findGames(date).then((games) => {
+      console.log(games);
+      chrome.storage.local.set({"gamesForToday": games});
+      chrome.runtime.sendMessage({gamesForToday: games});
+    }).catch((err) => {
+      console.log(err);
+    });
+  }

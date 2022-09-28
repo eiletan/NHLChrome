@@ -16,6 +16,8 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.runtime.onStartup.addListener(function() {
   createAlarmForDailySchedule();
   initData();
+  let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
+  initScheduledGames(date);
 });
 
 chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
@@ -57,13 +59,7 @@ chrome.alarms.onAlarm.addListener(onAlarm);
 function onAlarm(alarm) {
   if (alarm["name"] ==  "getScheduleForToday") {
     let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
-    findGames(date).then((games) => {
-      console.log(games);
-      chrome.storage.local.set({"gamesForToday": games});
-      chrome.runtime.sendMessage({gamesForToday: games});
-    }).catch((err) => {
-      console.log(err);
-    });
+    initScheduledGames(date);
   } else if (alarm["name"] == "liveGame") {
     console.log("refreshing!");
     updateGameStatus().then((gameStatus) => {
