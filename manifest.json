@@ -23,5 +23,10 @@
         "alarms",
         "notifications",
         "tabs"
-    ]
+    ],
+    "icons": {
+        "16": "/data/icon.png",
+        "48": "/data/icon.png",
+        "128": "/data/icon.png"
+    }
   }
