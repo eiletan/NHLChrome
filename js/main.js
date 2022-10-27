@@ -250,7 +250,7 @@ function setScoreboard(game) {
     if (gameState["periodTimeRemaining"] != undefined || gameState["periodTimeRemaining"] != null) {
       gameTime.innerHTML = gameState["periodTimeRemaining"];
     } else {
-      gameTime.innerHTML = "20:00";
+      gameTime.innerHTML = "SCHEDULED";
     }
   
     if (gameState["period"] != undefined || gameState["period"] != null) {
@@ -300,6 +300,8 @@ function displayGameHelper(curGame) {
       fakeGame["currentState"]["home"]["goals"] = 0;
       fakeGame["currentState"]["away"]["shots"] = 0;
       fakeGame["currentState"]["home"]["shots"] = 0;
+      fakeGame["currentState"]["periodTimeRemaining"] = "20:00";
+      fakeGame["currentState"]["period"] = "1st";
       fakeGame["away"]["logo"] = nhlObj["logo"];
       fakeGame["home"]["logo"] = nhlObj["logo"];
       setScoreboard(fakeGame);
