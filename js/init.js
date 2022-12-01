@@ -22,6 +22,7 @@
             obj["logo"] = team["logo"];
             obj["color"] = team["color"];
             obj["goalHorn"] = team["goalHorn"];
+            obj["hornLength"] = team["hornLength"];
             internalTeamsJson[obj["name"]] = obj;
           } else if (team["name"].valueOf() == "NHL") {
             chrome.storage.local.set({"NHLObj": team});

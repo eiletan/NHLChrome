@@ -85,10 +85,10 @@ function stopTrackingGameOnWin(game) {
   let win = determineWinner(game);
   let winTitle =  win["winnerShort"] + " wins! " + "(" + win["awayShort"] +  ": " + win["awayGoals"] + " | " + win["homeShort"] +  ": " + win["homeGoals"] + ")";
   let winMsg = "The " + win["winner"] + " win in " + win["winType"] + "!";
-  sendNotification(winTitle,winMsg,game[win["winnerLoc"]]["logo"],game[win["winnerLoc"]]["goalHorn"],40000).then((res) => {
+  sendNotification(winTitle,winMsg,game[win["winnerLoc"]]["logo"],game[win["winnerLoc"]]["goalHorn"],game[win["winnerLoc"]]["hornLength"]).then((res) => {
     chrome.storage.local.get(["soundWindowId"], function(results) {
       if (results.soundWindowId != undefined || results.soundWindowId != null ) {
-        timer = setTimeout(function() {chrome.windows.remove(results.soundWindowId)},40000); 
+        timer = setTimeout(function() {chrome.windows.remove(results.soundWindowId)},game[win["winnerLoc"]]["hornLength"]); 
       }
     });
   });
