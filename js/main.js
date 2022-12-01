@@ -314,15 +314,26 @@ function displayGameHelper(curGame) {
  * Initialize UI display
  */
 function displayUI() {
-  chrome.storage.local.get(["currentGame"], function (result) {
+  chrome.storage.local.get(["currentGame","gameListDate"], function (result) {
     let curGame = result.currentGame;
     displayGameHelper(curGame);
     let gameTableDiv = document.getElementById("gamesTableDiv");
     if (curGame != undefined || curGame != null) {
       gameTableDiv.style.display = "none";
     } else {
-      gameTableDiv.style.display = "block";
-      displayGamesToday();
+      if (result.gameListDate != null || result.gameListDate != undefined) {
+        let gameListUpdateDate = new Date(result.gameListDate);
+        let date = new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"});
+        let dateActual = new Date(date)
+        if (dateActual.getTime() != gameListUpdateDate.getTime()) {
+          chrome.runtime.sendMessage({updateGameList: true});
+        } else {
+          gameTableDiv.style.display = "block";
+          displayGamesToday();
+        }
+      } else {
+        chrome.runtime.sendMessage({updateGameList: true});
+      }
     }
   });
 

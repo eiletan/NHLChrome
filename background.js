@@ -7,17 +7,13 @@ try {
 
 
 chrome.runtime.onInstalled.addListener(function() {
-  // When extension is installed or reloaded, create alarm for getting games daily, and re-initalize teams data in local storage
-  createAlarmForDailySchedule();
+  // When extension is installed or reloaded, and re-initalize teams data in local storage
   initTeams();
 });
 
 
 chrome.runtime.onStartup.addListener(function() {
-  createAlarmForDailySchedule();
   initData();
-  let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
-  initScheduledGames(date);
 });
 
 chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
@@ -51,16 +47,16 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
       console.log(err);
       chrome.runtime.sendMessage({createGameSuccess: false});
     });
+  } else if (request.updateGameList) {
+    let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
+    initScheduledGames(date);
   }
 });
 
 chrome.alarms.onAlarm.addListener(onAlarm);
 
 function onAlarm(alarm) {
-  if (alarm["name"] ==  "getScheduleForToday") {
-    let date = String(new Date().toLocaleDateString("en-CA",{timeZone: "America/Los_Angeles"}));
-    initScheduledGames(date);
-  } else if (alarm["name"] == "liveGame") {
+  if (alarm["name"] == "liveGame") {
     console.log("refreshing!");
     updateGameStatus().then((gameStatus) => {
       let gameTime = gameStatus["currentState"]["periodTimeRemaining"];
@@ -81,31 +77,6 @@ function initData() {
       }
     }
   });
-}
-
-
-function createAlarmForDailySchedule() {
-  console.log("This function ran");
-  chrome.alarms.get("getScheduleForToday", function(alarm) {
-    // If alarm to get schedule doesn't exist, create it
-    if (alarm == undefined || alarm == null) {
-      // Run alarm to get daily schedule at 12am PST
-      let startDate = new Date();
-      let offset = startDate.getTimezoneOffset()/60;
-      console.log(startDate.getMinutes())
-      let endDate = new Date();
-      endDate.setDate(startDate.getDate()+1);
-      endDate.setHours(7-offset,5,0);
-      console.log(endDate.getTime());
-      let mseconds = (endDate.getTime() - startDate.getTime());
-      console.log(mseconds);
-      let alarmJson = {
-        periodInMinutes: 1440,
-        when: Date.now() + mseconds
-      };
-      chrome.alarms.create("getScheduleForToday",alarmJson);
-    }
-  })
 }
 
 

@@ -65,6 +65,7 @@
     findGames(date).then((games) => {
       console.log(games);
       chrome.storage.local.set({"gamesForToday": games});
+      chrome.storage.local.set({"gameListDate" : date})
       chrome.runtime.sendMessage({gamesForToday: games});
     }).catch((err) => {
       console.log(err);
