@@ -26,6 +26,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (games != undefined) {
       console.log("printing games from service worker");
       console.log(games);
+      let gameTableDiv = document.getElementById("gamesTableDiv");
+      gameTableDiv.style.display = "block";
       displayGamesToday(games);
     }
     if (request.createGameSuccess == true) {
